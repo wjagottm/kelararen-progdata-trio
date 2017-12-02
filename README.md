@@ -1,2 +1,2 @@
-# kelareren-progdata-trio
+# kelararen-progdata-trio
 De programmeren en databases trio opdracht
