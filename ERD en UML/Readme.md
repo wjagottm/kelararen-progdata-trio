@@ -1,1 +1,1 @@
-Hier staan het ERD en de UML klassendiagram.
+Hier staat het ERD en de UML klassendiagram.
