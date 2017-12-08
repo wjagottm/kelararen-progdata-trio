@@ -1,3 +1,6 @@
 public class main {
-    //zet hier iets leuks neer ;)
+    public main(){
+        System.out.println("Look at me!");
+        sayHello();
+    }
 }
