@@ -3,4 +3,8 @@ public class main {
         System.out.println("Look at me!");
         sayHello();
     }
+
+    public void sayHello(){
+        System.out.println("Hello");
+    }
 }
