@@ -1,3 +1,4 @@
+import javax.swing.*;
 import java.sql.*;
 
 /**
@@ -61,5 +62,7 @@ public class main {
             if (stmt != null) try { stmt.close(); } catch(Exception e) {}
             if (con != null) try { con.close(); } catch(Exception e) {}
         }
+
+        SwingUtilities.invokeLater(new UserInterface());
     }
 }
