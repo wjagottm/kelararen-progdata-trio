@@ -9,7 +9,7 @@ public class main {
     public static void main(String[] args) {
 
         // Dit zijn de instellingen voor de verbinding. Vervang de databaseName indien deze voor jou anders is.
-        String connectionUrl = "jdbc:sqlserver://localhost\\SQLEXPRESS;databaseName=Bibliotheek;integratedSecurity=true;";
+        String connectionUrl = "jdbc:sqlserver://netflixstatistixsv1.database.windows.net:1433;database=NetflixStatistix;user=kelararen@netflixstatistixsv1;password=Welkom01!;encrypt=true;trustServerCertificate=false;hostNameInCertificate=*.database.windows.net;loginTimeout=30;";
 
         // Connection beheert informatie over de connectie met de database.
         Connection con = null;
