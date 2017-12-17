@@ -28,7 +28,7 @@ public class main {
             con = DriverManager.getConnection(connectionUrl);
 
             // Stel een SQL query samen.
-            String SQL = "SELECT TOP 10 * FROM Boek";
+            String SQL = "SELECT TOP 10 * FROM BOEK";
             stmt = con.createStatement();
             // Voer de query uit op de database.
             rs = stmt.executeQuery(SQL);

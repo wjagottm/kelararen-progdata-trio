@@ -1,5 +1,4 @@
-import java.awt.Container;
-import java.awt.Dimension;
+import java.awt.*;
 import javax.swing.*;
 
 public class UserInterface implements Runnable {
@@ -20,7 +19,15 @@ public class UserInterface implements Runnable {
     }
 
     private void createComponents(Container container) {
-        BoxLayout layout = new BoxLayout(container, BoxLayout.Y_AXIS);
-        container.setLayout(layout);
+        container.add(createLeftButtons(), BorderLayout.WEST);
+        container.add(new JTextArea());
+    }
+
+    private JPanel createLeftButtons() {
+        JPanel panel = new JPanel(new GridLayout(3, 1));
+        panel.add(new JButton("Execute"));
+        panel.add(new JButton("Test"));
+        panel.add(new JButton("Send"));
+        return panel;
     }
 }
