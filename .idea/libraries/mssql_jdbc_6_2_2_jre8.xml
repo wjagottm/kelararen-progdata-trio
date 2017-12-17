@@ -4,6 +4,9 @@
       <root url="jar://C:/Program Files/Microsoft JDBC Driver 6.2 for SQL Server/sqljdbc_6.2/enu/mssql-jdbc-6.2.2.jre8.jar!/" />
     </CLASSES>
     <JAVADOC />
+    <NATIVE>
+      <root url="file://C:/Program Files/Microsoft JDBC Driver 6.2 for SQL Server/sqljdbc_6.2/enu/auth/x64" />
+    </NATIVE>
     <SOURCES />
   </library>
 </component>
