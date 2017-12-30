@@ -6,7 +6,7 @@ import javax.swing.*;
 public class UserInterface implements Runnable {
 
     private JFrame frame;
-    private ContainerManagement containerManager = new ContainerManagement();
+    private ContainerManagement containerManagement = new ContainerManagement();
 
     @Override
     public void run() {
@@ -22,15 +22,11 @@ public class UserInterface implements Runnable {
     }
 
     private void createComponents(Container container) {
-        Container account = new Container();
-        account.setLayout(new BoxLayout(account, BoxLayout.Y_AXIS));
-        account.add(new JLabel("Test"));
-        containerManager.add("accounts", account);
-
-        Container newtest = new Container();
-        newtest.setLayout(new BoxLayout(newtest, BoxLayout.Y_AXIS));
-        newtest.add(new JLabel("newTest"));
-        containerManager.add("test", newtest);
+        containerManagement.accounts();
+        containerManagement.filmUnderSixteenContainer();
+        containerManagement.singleProfileAccounts();
+        containerManagement.getAllSeries();
+        containerManagement.getAllFilms();
 
         container.add(createLeftButtons(), BorderLayout.WEST);
         container.add(footer(), BorderLayout.SOUTH);
@@ -57,13 +53,14 @@ public class UserInterface implements Runnable {
         {
             public void actionPerformed(ActionEvent e)
             {
-                Container test = containerManager.grabCurrentContainer();
-                if (test != null) {
-                    frame.getContentPane().remove(test);
+                Container testCurrentContainer = containerManagement.grabCurrentContainer();
+                Container newContainer = containerManagement.get("allAccounts");
+                if (testCurrentContainer != null) {
+                    frame.getContentPane().remove(testCurrentContainer);
                 }
-                frame.getContentPane().add(containerManager.get("accounts"), BorderLayout.CENTER);
+                frame.getContentPane().add(newContainer, BorderLayout.CENTER);
 
-                containerManager.placeCurrentContainer(containerManager.get("accounts"));
+                containerManagement.placeCurrentContainer(newContainer);
 
                 frame.invalidate();
                 frame.validate();
@@ -75,13 +72,14 @@ public class UserInterface implements Runnable {
         {
             public void actionPerformed(ActionEvent e)
             {
-                Container test = containerManager.grabCurrentContainer();
-                if (test != null) {
-                    frame.getContentPane().remove(test);
+                Container testCurrentContainer = containerManagement.grabCurrentContainer();
+                Container newContainer = containerManagement.get("filmUnderSixteen");
+                if (testCurrentContainer != null) {
+                    frame.getContentPane().remove(testCurrentContainer);
                 }
-                frame.getContentPane().add(containerManager.get("test"), BorderLayout.CENTER);
+                frame.getContentPane().add(newContainer, BorderLayout.CENTER);
 
-                containerManager.placeCurrentContainer(containerManager.get("test"));
+                containerManagement.placeCurrentContainer(newContainer);
 
                 frame.invalidate();
                 frame.validate();
@@ -93,10 +91,18 @@ public class UserInterface implements Runnable {
         {
             public void actionPerformed(ActionEvent e)
             {
-                // display/center the jdialog when the button is pressed
-                JDialog d = new JDialog(frame, "Hello", true);
-                d.setLocationRelativeTo(frame);
-                d.setVisible(true);
+                Container testCurrentContainer = containerManagement.grabCurrentContainer();
+                Container newContainer = containerManagement.get("singleProfileAccounts");
+                if (testCurrentContainer != null) {
+                    frame.getContentPane().remove(testCurrentContainer);
+                }
+                frame.getContentPane().add(newContainer, BorderLayout.CENTER);
+
+                containerManagement.placeCurrentContainer(newContainer);
+
+                frame.invalidate();
+                frame.validate();
+                frame.repaint();
             }
         });
 
@@ -104,10 +110,18 @@ public class UserInterface implements Runnable {
         {
             public void actionPerformed(ActionEvent e)
             {
-                // display/center the jdialog when the button is pressed
-                JDialog d = new JDialog(frame, "Hello", true);
-                d.setLocationRelativeTo(frame);
-                d.setVisible(true);
+                Container testCurrentContainer = containerManagement.grabCurrentContainer();
+                Container newContainer = containerManagement.get("allSeries");
+                if (testCurrentContainer != null) {
+                    frame.getContentPane().remove(testCurrentContainer);
+                }
+                frame.getContentPane().add(newContainer, BorderLayout.CENTER);
+
+                containerManagement.placeCurrentContainer(newContainer);
+
+                frame.invalidate();
+                frame.validate();
+                frame.repaint();
             }
         });
 
@@ -115,10 +129,18 @@ public class UserInterface implements Runnable {
         {
             public void actionPerformed(ActionEvent e)
             {
-                // display/center the jdialog when the button is pressed
-                JDialog d = new JDialog(frame, "Hello", true);
-                d.setLocationRelativeTo(frame);
-                d.setVisible(true);
+                Container testCurrentContainer = containerManagement.grabCurrentContainer();
+                Container newContainer = containerManagement.get("allFilms");
+                if (testCurrentContainer != null) {
+                    frame.getContentPane().remove(testCurrentContainer);
+                }
+                frame.getContentPane().add(newContainer, BorderLayout.CENTER);
+
+                containerManagement.placeCurrentContainer(newContainer);
+
+                frame.invalidate();
+                frame.validate();
+                frame.repaint();
             }
         });
 
