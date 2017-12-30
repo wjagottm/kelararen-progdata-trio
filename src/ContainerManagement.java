@@ -1,11 +1,16 @@
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.awt.ItemSelectable;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 
 public class ContainerManagement {
 
     private HashMap<String, Container> containers;
     private Container currentContainer;
+    private SQLConnection connection = new SQLConnection();
 
     public ContainerManagement() {
         this.containers = new HashMap<String, Container>();
@@ -34,8 +39,25 @@ public class ContainerManagement {
 
     public void accounts() {
         Container accountContainer = new Container();
+
+        ArrayList<Integer> accountIds = connection.getAccountId();
+        JComboBox accountList = new JComboBox();
+        for (Integer accountID : accountIds) {
+            accountList.addItem(accountID);
+        }
+
+        ItemListener itemListener = new ItemListener() {
+            public void itemStateChanged(ItemEvent itemEvent) {
+                int state = itemEvent.getStateChange();
+                System.out.println((state == ItemEvent.SELECTED) ? "Selected" : "Deselected");
+                System.out.println("Item: " + itemEvent.getItem());
+            }
+        };
+        accountList.addItemListener(itemListener);
+        accountList.setMaximumSize(new Dimension(250,50));
+
         accountContainer.setLayout(new BoxLayout(accountContainer, BoxLayout.Y_AXIS));
-        accountContainer.add(new JLabel("Test"));
+        accountContainer.add(accountList);
         add("allAccounts", accountContainer);
     }
 
