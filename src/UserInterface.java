@@ -1,7 +1,10 @@
+import javafx.scene.layout.BorderStroke;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.*;
+import javax.swing.border.Border;
 
 public class UserInterface implements Runnable {
 
@@ -16,6 +19,8 @@ public class UserInterface implements Runnable {
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
         createComponents(frame.getContentPane());
+
+        frame.getContentPane().setBackground(Color.WHITE);
 
         frame.pack();
         frame.setVisible(true);
@@ -60,11 +65,7 @@ public class UserInterface implements Runnable {
                 }
                 frame.getContentPane().add(newContainer, BorderLayout.CENTER);
 
-                containerManagement.placeCurrentContainer(newContainer);
-
-                frame.invalidate();
-                frame.validate();
-                frame.repaint();
+                addNewContainer(newContainer);
             }
         });
 
@@ -79,11 +80,7 @@ public class UserInterface implements Runnable {
                 }
                 frame.getContentPane().add(newContainer, BorderLayout.CENTER);
 
-                containerManagement.placeCurrentContainer(newContainer);
-
-                frame.invalidate();
-                frame.validate();
-                frame.repaint();
+                addNewContainer(newContainer);
             }
         });
 
@@ -98,11 +95,7 @@ public class UserInterface implements Runnable {
                 }
                 frame.getContentPane().add(newContainer, BorderLayout.CENTER);
 
-                containerManagement.placeCurrentContainer(newContainer);
-
-                frame.invalidate();
-                frame.validate();
-                frame.repaint();
+                addNewContainer(newContainer);
             }
         });
 
@@ -117,11 +110,7 @@ public class UserInterface implements Runnable {
                 }
                 frame.getContentPane().add(newContainer, BorderLayout.CENTER);
 
-                containerManagement.placeCurrentContainer(newContainer);
-
-                frame.invalidate();
-                frame.validate();
-                frame.repaint();
+                addNewContainer(newContainer);
             }
         });
 
@@ -136,11 +125,7 @@ public class UserInterface implements Runnable {
                 }
                 frame.getContentPane().add(newContainer, BorderLayout.CENTER);
 
-                containerManagement.placeCurrentContainer(newContainer);
-
-                frame.invalidate();
-                frame.validate();
-                frame.repaint();
+                addNewContainer(newContainer);
             }
         });
 
@@ -152,6 +137,10 @@ public class UserInterface implements Runnable {
         //Add left buttons to JPanel inside 2
         leftPanelInside2.add(series);
         leftPanelInside2.add(films);
+
+        leftPanel.setBorder(BorderFactory.createLineBorder(Color.BLUE));
+        leftPanel.setBackground(Color.WHITE);
+        leftPanelInside2.setBackground(Color.WHITE);
 
         //Return JPanels to caller
         return leftPanel;
@@ -173,7 +162,18 @@ public class UserInterface implements Runnable {
         footerContent.add(projectName);
         footerContent.add(creatorNames);
 
+        footerContent.setBorder(BorderFactory.createLineBorder(Color.BLUE));
+        footerContent.setBackground(Color.WHITE);
+
         //Return JPanel to caller
         return footerContent;
+    }
+
+    public void addNewContainer(Container container) {
+        containerManagement.placeCurrentContainer(container);
+
+        frame.invalidate();
+        frame.validate();
+        frame.repaint();
     }
 }

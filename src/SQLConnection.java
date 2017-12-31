@@ -92,4 +92,80 @@ public class SQLConnection {
             }
             return accounts;
         }
+
+        public String getFirstAccountId() {
+            ResultSet rs = null;
+            Connection con = null;
+            Statement stmt = null;
+            String abonneeNummer = null;
+            try {
+                Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+                con = DriverManager.getConnection(connectionUrl);
+                String SQL = "SELECT TOP 1 * FROM account";
+                stmt = con.createStatement();
+                rs = stmt.executeQuery(SQL);
+                while (rs.next()) {
+                    abonneeNummer = String.valueOf(rs.getInt("AbonneeNummer"));
+                }
+
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
+            return abonneeNummer;
+        }
+
+        public ResultSet getAccountInformation(Object account) {
+            ResultSet rs = null;
+            Connection con = null;
+            Statement stmt = null;
+            try {
+                Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+                con = DriverManager.getConnection(connectionUrl);
+                String SQL = "SELECT * FROM account WHERE Abonneenummer = '" + String.valueOf(account) + "'";
+                stmt = con.createStatement();
+                rs = stmt.executeQuery(SQL);
+
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
+            return rs;
+        }
+
+        public ResultSet getFirstAccountInformation() {
+            ResultSet rs = null;
+            Connection con = null;
+            Statement stmt = null;
+            try {
+                Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+                con = DriverManager.getConnection(connectionUrl);
+                String SQL = "SELECT TOP 1* FROM account";
+                stmt = con.createStatement();
+                rs = stmt.executeQuery(SQL);
+
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
+            return rs;
+        }
+
+        public ResultSet getFilmsWatchedByAccount(String account) {
+            ResultSet rs = null;
+            Connection con = null;
+            Statement stmt = null;
+            try {
+                Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+                con = DriverManager.getConnection(connectionUrl);
+                String SQL = "SELECT Account.AbonneeNummer, Film.Titel, Film.Id FROM Film, Account, Profiel, Bekeken, Aanbod WHERE Account.AbonneeNummer = '" + account + "' AND Account.AbonneeNummer = Profiel.AbonneeNummer AND Profiel.AbonneeNummer = Bekeken.AbonneeNummer AND Bekeken.Gezien = Aanbod.Id AND Aanbod.Id = Film.Id GROUP BY Account.AbonneeNummer, Film.Titel, Film.Id ORDER BY Account.AbonneeNummer";
+                stmt = con.createStatement();
+                rs = stmt.executeQuery(SQL);
+
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
+            return rs;
+        }
 }
