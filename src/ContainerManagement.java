@@ -1,21 +1,19 @@
 import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.awt.ItemSelectable;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.util.Vector;
 
 public class ContainerManagement {
 
     private HashMap<String, Container> containers;
     private Container currentContainer;
+
     private SQLConnection connection = new SQLConnection();
+    private idGrabber idGrabber = new idGrabber();
+    private tableBuilder tableBuilder = new tableBuilder();
+
     private JScrollPane tablePane1 = null;
     private JScrollPane tablePane2 = null;
     private JLabel watchedFilms = new JLabel("Watched Movies:");
@@ -46,71 +44,59 @@ public class ContainerManagement {
         return this.currentContainer;
     }
 
-    public void accounts() {
+    public void accountsContainer() {
         Container accountContainer = new Container();
-        emptySpace = Box.createRigidArea(new Dimension(0,accountContainer.getHeight() / 2 - 100));
 
-        ArrayList<Integer> accountIds = connection.getAccountId();
-        JComboBox accountList = new JComboBox();
-        for (Integer accountID : accountIds) {
-            accountList.addItem(accountID);
-        }
+        //Design settings
+        emptySpace = Box.createRigidArea(new Dimension(0,accountContainer.getHeight() / 2 - 100));
+        accountContainer.setLayout(new BoxLayout(accountContainer, BoxLayout.Y_AXIS));
+
+
+        JComboBox accountList = idGrabber.getAccountId();
 
         accountList.setFont(new Font("Serif", Font.PLAIN, 20));
         accountList.setMaximumSize(new Dimension(8000,50));
         accountList.setBackground(Color.getHSBColor(167,0,10));
 
-        accountContainer.setLayout(new BoxLayout(accountContainer, BoxLayout.Y_AXIS));
+
         accountContainer.add(accountList);
 
         ResultSet accountInformationRs = connection.getFirstAccountInformation();
         ResultSet accountWatchedFilmsRs = connection.getFilmsWatchedByAccount(connection.getFirstAccountId());
         try {
             if (!accountWatchedFilmsRs.isBeforeFirst() ) {
-                System.out.println("No data");
+                this.tablePane2 = null;
             } else {
-                System.out.println("found some data");
-                JTable accountWatchedFilmsTable = new JTable(buildTableModel(accountWatchedFilmsRs));
-
+                JTable accountWatchedFilmsTable = new JTable(tableBuilder.buildTableModel(accountWatchedFilmsRs));
                 tablePane2 = new JScrollPane(accountWatchedFilmsTable);
             }
 
-            JTable table = new JTable(buildTableModel(accountInformationRs));
+            JTable table = new JTable(tableBuilder.buildTableModel(accountInformationRs));
             tablePane1 = new JScrollPane(table);
 
             JLabel profileInformation = new JLabel("Profile information:");
+
             profileInformation.setFont(new Font("Serif", Font.BOLD, 30));
             tablePane1.setFont(new Font("Serif", Font.PLAIN, 30));
             tablePane1.setBackground(Color.WHITE);
-
-
             watchedFilms.setFont(new Font("Serif", Font.BOLD, 30));
 
             accountContainer.add(profileInformation);
             accountContainer.add(tablePane1);
 
-            if(tablePane2 == null) {
-                accountContainer.add(watchedFilms);
-                accountContainer.add(emptySpace);
-            }
-
             if(tablePane2 != null) {
-                accountContainer.remove(emptySpace);
                 accountContainer.add(tablePane2);
             }
 
             accountInformationRs.close();
             accountWatchedFilmsRs.close();
         } catch (Exception e) {
-            System.out.println("not working");
             System.out.println(e);
         }
 
         ItemListener itemListener = new ItemListener() {
             public void itemStateChanged(ItemEvent itemEvent) {
                 int state = itemEvent.getStateChange();
-                System.out.println((state == ItemEvent.SELECTED) ? "Selected" : "Deselected");
-                System.out.println("Item: " + itemEvent.getItem());
                 if( state == 1) {
                     ResultSet accountInformationRs = connection.getAccountInformation(itemEvent.getItem());
                     ResultSet accountWatchedFilmsRs = connection.getFilmsWatchedByAccount(String.valueOf(itemEvent.getItem()));
@@ -121,10 +107,8 @@ public class ContainerManagement {
                                 accountContainer.remove(tablePane2);
                                 tablePane2 = null;
                             }
-                            System.out.println("No data");
                         } else {
-                            System.out.println("found data");
-                            JTable accountWatchedFilmsTable = new JTable(buildTableModel(accountWatchedFilmsRs));
+                            JTable accountWatchedFilmsTable = new JTable(tableBuilder.buildTableModel(accountWatchedFilmsRs));
 
                             if(tablePane2 != null) {
                                 accountContainer.remove(tablePane2);
@@ -132,20 +116,13 @@ public class ContainerManagement {
 
                             tablePane2 = new JScrollPane(accountWatchedFilmsTable);
                         }
-                        JTable accountInformationTable = new JTable(buildTableModel(accountInformationRs));
+                        JTable accountInformationTable = new JTable(tableBuilder.buildTableModel(accountInformationRs));
 
                         accountContainer.remove(tablePane1);
                         tablePane1 = new JScrollPane(accountInformationTable);
                         accountContainer.add(tablePane1);
-                        accountContainer.add(watchedFilms);
-
-                        if(tablePane2 == null) {
-                            accountContainer.add(watchedFilms);
-                            accountContainer.add(emptySpace);
-                        }
 
                         if(tablePane2 != null) {
-                            accountContainer.remove(emptySpace);
                             accountContainer.add(tablePane2);
                         }
 
@@ -156,40 +133,14 @@ public class ContainerManagement {
                         accountInformationRs.close();
                         accountWatchedFilmsRs.close();
                     } catch (Exception e) {
-                        System.out.println("not working");
                         System.out.println(e);
                     }
                 }
             }
         };
-
         accountList.addItemListener(itemListener);
+
         add("allAccounts", accountContainer);
-    }
-
-    public static DefaultTableModel buildTableModel(ResultSet rs) throws SQLException {
-
-        ResultSetMetaData metaData = rs.getMetaData();
-
-        // names of columns
-        Vector<String> columnNames = new Vector<String>();
-        int columnCount = metaData.getColumnCount();
-        for (int column = 1; column <= columnCount; column++) {
-            columnNames.add(metaData.getColumnName(column));
-        }
-
-        // data of the table
-        Vector<Vector<Object>> data = new Vector<Vector<Object>>();
-        while (rs.next()) {
-            Vector<Object> vector = new Vector<Object>();
-            for (int columnIndex = 1; columnIndex <= columnCount; columnIndex++) {
-                vector.add(rs.getObject(columnIndex));
-            }
-            data.add(vector);
-        }
-
-        return new DefaultTableModel(data, columnNames);
-
     }
 
     public void filmUnderSixteenContainer() {
@@ -206,14 +157,14 @@ public class ContainerManagement {
         add("singleProfileAccounts", singleProfileAccounts);
     }
 
-    public void getAllSeries() {
+    public void getAllSeriesContainer() {
         Container allSeries = new Container();
         allSeries.setLayout(new BoxLayout(allSeries, BoxLayout.Y_AXIS));
         allSeries.add(new JLabel("All current series"));
         add("allSeries", allSeries);
     }
 
-    public void getAllFilms() {
+    public void getAllFilmsContainer() {
         Container allFilms = new Container();
         allFilms.setLayout(new BoxLayout(allFilms, BoxLayout.Y_AXIS));
         allFilms.add(new JLabel("All current films"));

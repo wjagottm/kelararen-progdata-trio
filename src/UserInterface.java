@@ -27,11 +27,11 @@ public class UserInterface implements Runnable {
     }
 
     private void createComponents(Container container) {
-        containerManagement.accounts();
+        containerManagement.accountsContainer();
         containerManagement.filmUnderSixteenContainer();
         containerManagement.singleProfileAccounts();
-        containerManagement.getAllSeries();
-        containerManagement.getAllFilms();
+        containerManagement.getAllSeriesContainer();
+        containerManagement.getAllFilmsContainer();
 
         container.add(createLeftButtons(), BorderLayout.WEST);
         container.add(footer(), BorderLayout.SOUTH);
