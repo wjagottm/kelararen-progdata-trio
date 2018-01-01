@@ -42,7 +42,7 @@ public class ContainerManagement {
         this.currentContainer = container;
     }
 
-    public Container grabCurrentContainer() {
+      public Container grabCurrentContainer() {
         return this.currentContainer;
     }
 
@@ -63,7 +63,7 @@ public class ContainerManagement {
         accountContainer.setLayout(new BoxLayout(accountContainer, BoxLayout.Y_AXIS));
         accountContainer.add(accountList);
 
-        ResultSet rs = connection.getFirstAccountInformation();
+        ResultSet accountInformationRs = connection.getFirstAccountInformation();
         ResultSet accountWatchedFilmsRs = connection.getFilmsWatchedByAccount(connection.getFirstAccountId());
         try {
             if (!accountWatchedFilmsRs.isBeforeFirst() ) {
@@ -75,7 +75,7 @@ public class ContainerManagement {
                 tablePane2 = new JScrollPane(accountWatchedFilmsTable);
             }
 
-            JTable table = new JTable(buildTableModel(rs));
+            JTable table = new JTable(buildTableModel(accountInformationRs));
             tablePane1 = new JScrollPane(table);
 
             JLabel profileInformation = new JLabel("Profile information:");
@@ -99,7 +99,8 @@ public class ContainerManagement {
                 accountContainer.add(tablePane2);
             }
 
-            rs.close();
+            accountInformationRs.close();
+            accountWatchedFilmsRs.close();
         } catch (Exception e) {
             System.out.println("not working");
             System.out.println(e);
@@ -153,6 +154,7 @@ public class ContainerManagement {
                         accountContainer.repaint();
 
                         accountInformationRs.close();
+                        accountWatchedFilmsRs.close();
                     } catch (Exception e) {
                         System.out.println("not working");
                         System.out.println(e);
