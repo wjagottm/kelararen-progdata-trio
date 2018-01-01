@@ -5,9 +5,6 @@ import java.sql.SQLException;
 import java.util.Vector;
 
 public class tableBuilder {
-    public tableBuilder() {
-
-    }
 
     public static DefaultTableModel buildTableModel(ResultSet rs) throws SQLException {
 

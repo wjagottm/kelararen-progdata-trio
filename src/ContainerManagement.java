@@ -17,7 +17,6 @@ public class ContainerManagement {
     private JScrollPane tablePane1 = null;
     private JScrollPane tablePane2 = null;
     private JLabel watchedFilms = new JLabel("Watched Movies:");
-    private Component emptySpace = null;
 
     public ContainerManagement() {
         this.containers = new HashMap<String, Container>();
@@ -47,13 +46,10 @@ public class ContainerManagement {
     public void accountsContainer() {
         Container accountContainer = new Container();
 
-        //Design settings
-        emptySpace = Box.createRigidArea(new Dimension(0,accountContainer.getHeight() / 2 - 100));
-        accountContainer.setLayout(new BoxLayout(accountContainer, BoxLayout.Y_AXIS));
-
-
         JComboBox accountList = idGrabber.getAccountId();
 
+        //Design settings
+        accountContainer.setLayout(new BoxLayout(accountContainer, BoxLayout.Y_AXIS));
         accountList.setFont(new Font("Serif", Font.PLAIN, 20));
         accountList.setMaximumSize(new Dimension(8000,50));
         accountList.setBackground(Color.getHSBColor(167,0,10));
@@ -76,6 +72,7 @@ public class ContainerManagement {
 
             JLabel profileInformation = new JLabel("Profile information:");
 
+            //Design settings
             profileInformation.setFont(new Font("Serif", Font.BOLD, 30));
             tablePane1.setFont(new Font("Serif", Font.PLAIN, 30));
             tablePane1.setBackground(Color.WHITE);
@@ -159,15 +156,32 @@ public class ContainerManagement {
 
     public void getAllSeriesContainer() {
         Container allSeries = new Container();
+
+        JComboBox allSerieTitles = idGrabber.getAllSerieTitles();
+
+        //Design
         allSeries.setLayout(new BoxLayout(allSeries, BoxLayout.Y_AXIS));
-        allSeries.add(new JLabel("All current series"));
+        allSerieTitles.setFont(new Font("Serif", Font.PLAIN, 20));
+        allSerieTitles.setMaximumSize(new Dimension(8000,50));
+        allSerieTitles.setBackground(Color.getHSBColor(167,0,10));
+
+        allSeries.add(allSerieTitles);
         add("allSeries", allSeries);
     }
 
     public void getAllFilmsContainer() {
         Container allFilms = new Container();
+
+        JComboBox allFilmTitles = idGrabber.getAllFilmTitles();
+
+        //Design
         allFilms.setLayout(new BoxLayout(allFilms, BoxLayout.Y_AXIS));
-        allFilms.add(new JLabel("All current films"));
+        allFilmTitles.setFont(new Font("Serif", Font.PLAIN, 20));
+        allFilmTitles.setMaximumSize(new Dimension(8000,50));
+        allFilmTitles.setBackground(Color.getHSBColor(167,0,10));
+
+        allFilms.add(allFilmTitles);
+
         add("allFilms", allFilms);
     }
 }
