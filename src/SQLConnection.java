@@ -173,5 +173,40 @@ public class SQLConnection {
         }
         return series;
     }
+
+    public ResultSet getFirstFilmInformation() {
+        ResultSet rs = null;
+        Connection con = null;
+        Statement stmt = null;
+        try {
+            Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+            con = DriverManager.getConnection(connectionUrl);
+            String SQL = "SELECT TOP 1 * FROM Film";
+            stmt = con.createStatement();
+            rs = stmt.executeQuery(SQL);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return rs;
+    }
+
+    public ResultSet getFilmInformation(Object film) {
+        ResultSet rs = null;
+        Connection con = null;
+        Statement stmt = null;
+        String newFilmString = String.valueOf(film).replaceAll("'","''");
+        try {
+            Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+            con = DriverManager.getConnection(connectionUrl);
+            String SQL = "SELECT * FROM Film WHERE Titel = '"+ newFilmString +"'";
+            stmt = con.createStatement();
+            rs = stmt.executeQuery(SQL);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return rs;
+    }
 }
 

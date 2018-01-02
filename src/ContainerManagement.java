@@ -14,9 +14,16 @@ public class ContainerManagement {
     private idGrabber idGrabber = new idGrabber();
     private tableBuilder tableBuilder = new tableBuilder();
 
+    //Variables for account tab
     private JScrollPane tablePane1 = null;
     private JScrollPane tablePane2 = null;
     private JLabel watchedFilms = new JLabel("Watched Movies:");
+
+    //Variables for film tab
+    private JScrollPane filmTablePane1 = null;
+    private JScrollPane filmTablePane2 = null;
+
+    //Variables for series tab
 
     public ContainerManagement() {
         this.containers = new HashMap<String, Container>();
@@ -181,6 +188,49 @@ public class ContainerManagement {
         allFilmTitles.setBackground(Color.getHSBColor(167,0,10));
 
         allFilms.add(allFilmTitles);
+
+        ResultSet firstFilmInformationRs = connection.getFirstFilmInformation();
+        try {
+            JTable filmTable = new JTable(tableBuilder.buildTableModel(firstFilmInformationRs));
+            filmTablePane1 = new JScrollPane(filmTable);
+
+            JLabel filmInformation = new JLabel("Film information:");
+
+            filmInformation.setFont(new Font("Serif", Font.BOLD, 30));
+            filmTablePane1.setFont(new Font("Serif", Font.PLAIN, 30));
+            filmTablePane1.setBackground(Color.WHITE);
+
+            allFilms.add(filmInformation);
+            allFilms.add(filmTablePane1);
+
+            firstFilmInformationRs.close();
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
+        ItemListener itemListener = new ItemListener() {
+            public void itemStateChanged(ItemEvent itemEvent) {
+                int state = itemEvent.getStateChange();
+                if(state == 1) {
+                    ResultSet filmInformationRs = connection.getFilmInformation(itemEvent.getItem());
+                    try{
+                        JTable filmInformationTable = new JTable(tableBuilder.buildTableModel(filmInformationRs));
+
+                        allFilms.remove(filmTablePane1);
+                        filmTablePane1 = new JScrollPane(filmInformationTable);
+                        allFilms.add(filmTablePane1);
+
+                        allFilms.revalidate();
+                        allFilms.repaint();
+
+                        filmInformationRs.close();
+                    } catch (Exception e) {
+                        System.out.println(e);
+                    }
+                }
+            }
+        };
+        allFilmTitles.addItemListener(itemListener);
 
         add("allFilms", allFilms);
     }
