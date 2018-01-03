@@ -208,5 +208,86 @@ public class SQLConnection {
         }
         return rs;
     }
+
+    public String getFirstFilmTitle() {
+        ResultSet rs = null;
+        Connection con = null;
+        Statement stmt = null;
+        String filmTitle = null;
+        try {
+            Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+            con = DriverManager.getConnection(connectionUrl);
+            String SQL = "SELECT TOP 1 * FROM Film";
+            stmt = con.createStatement();
+            rs = stmt.executeQuery(SQL);
+            while(rs.next()) {
+                filmTitle = rs.getString("Titel").replaceAll("'", "''");
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return filmTitle;
+    }
+
+    public int getFirstFilmAmountOfFullWatches() {
+        ResultSet rs = null;
+        Connection con = null;
+        Statement stmt = null;
+        int amountOfTimes = 0;
+        try {
+            Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+            con = DriverManager.getConnection(connectionUrl);
+            String SQL = "SELECT Bekeken.AbonneeNummer FROM Film, Aanbod, Bekeken WHERE Bekeken.Percentage = '100' and film.Id = aanbod.Id and Aanbod.Id = Bekeken.Gezien and film.titel = '" + getFirstFilmTitle() + "'";
+            stmt = con.createStatement();
+            rs = stmt.executeQuery(SQL);
+            while(rs.next()) {
+                amountOfTimes++;
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return amountOfTimes;
+    }
+
+    public int getFilmAmountOfTimesFullWatches(Object film) {
+        ResultSet rs = null;
+        Connection con = null;
+        Statement stmt = null;
+        String newFilmString = String.valueOf(film).replaceAll("'","''");
+        int amountOfTimes = 0;
+        try {
+            Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+            con = DriverManager.getConnection(connectionUrl);
+            String SQL = "SELECT Bekeken.AbonneeNummer FROM Film, Aanbod, Bekeken WHERE Bekeken.Percentage = '100' and film.Id = aanbod.Id and Aanbod.Id = Bekeken.Gezien and film.titel = '" + newFilmString + "'";
+            stmt = con.createStatement();
+            rs = stmt.executeQuery(SQL);
+            while(rs.next()) {
+                amountOfTimes++;
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return amountOfTimes;
+    }
+
+    public ResultSet getLongestFilmDurationUnderAgeSixteen() {
+        ResultSet rs = null;
+        Connection con = null;
+        Statement stmt = null;
+        try {
+            Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+            con = DriverManager.getConnection(connectionUrl);
+            String SQL = "SELECT * FROM Film WHERE (Tijdsduur) IN (SELECT MAX(Tijdsduur) FROM Film);";
+            stmt = con.createStatement();
+            rs = stmt.executeQuery(SQL);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return rs;
+    }
 }
 

@@ -22,6 +22,8 @@ public class ContainerManagement {
     //Variables for film tab
     private JScrollPane filmTablePane1 = null;
     private JScrollPane filmTablePane2 = null;
+    private JLabel amountOfTimesFullyWatchedString = null;
+    private JLabel amountOfTimesFullyWatched = null;
 
     //Variables for series tab
 
@@ -147,13 +149,6 @@ public class ContainerManagement {
         add("allAccounts", accountContainer);
     }
 
-    public void filmUnderSixteenContainer() {
-        Container filmUnderSixteenContainer = new Container();
-        filmUnderSixteenContainer.setLayout(new BoxLayout(filmUnderSixteenContainer, BoxLayout.Y_AXIS));
-        filmUnderSixteenContainer.add(new JLabel("Films"));
-        add("filmUnderSixteen", filmUnderSixteenContainer);
-    }
-
     public void singleProfileAccounts() {
         Container singleProfileAccounts = new Container();
         singleProfileAccounts.setLayout(new BoxLayout(singleProfileAccounts, BoxLayout.Y_AXIS));
@@ -179,6 +174,24 @@ public class ContainerManagement {
     public void getAllFilmsContainer() {
         Container allFilms = new Container();
 
+        JLabel longestFilmDurationUnderAgeSixteenString = new JLabel("Film with longest duration for PEGI 16:");
+        longestFilmDurationUnderAgeSixteenString.setFont(new Font("Serif", Font.BOLD, 30));
+
+        ResultSet longestFilmDurationUnderAgeSixteen = connection.getLongestFilmDurationUnderAgeSixteen();
+        try {
+            JScrollPane longestFilmDurationUnderAgeSixteenPane = new JScrollPane(new JTable(tableBuilder.buildTableModel(longestFilmDurationUnderAgeSixteen)));
+            longestFilmDurationUnderAgeSixteenPane.setPreferredSize(new Dimension(3000,80));
+
+            allFilms.add(longestFilmDurationUnderAgeSixteenString);
+            allFilms.add(longestFilmDurationUnderAgeSixteenPane);
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
+        JSeparator seperator = new JSeparator(SwingConstants.HORIZONTAL);
+        allFilms.add(seperator);
+
+        JLabel allFilmTitlesString = new JLabel("Select a film title:");
         JComboBox allFilmTitles = idGrabber.getAllFilmTitles();
 
         //Design
@@ -186,7 +199,9 @@ public class ContainerManagement {
         allFilmTitles.setFont(new Font("Serif", Font.PLAIN, 20));
         allFilmTitles.setMaximumSize(new Dimension(8000,50));
         allFilmTitles.setBackground(Color.getHSBColor(167,0,10));
+        allFilmTitlesString.setFont(new Font("Serif", Font.BOLD, 30));
 
+        allFilms.add(allFilmTitlesString);
         allFilms.add(allFilmTitles);
 
         ResultSet firstFilmInformationRs = connection.getFirstFilmInformation();
@@ -195,13 +210,22 @@ public class ContainerManagement {
             filmTablePane1 = new JScrollPane(filmTable);
 
             JLabel filmInformation = new JLabel("Film information:");
+            amountOfTimesFullyWatchedString = new JLabel("Amount of times fully watched:");
+            amountOfTimesFullyWatched = new JLabel(String.valueOf(connection.getFirstFilmAmountOfFullWatches()));
+
 
             filmInformation.setFont(new Font("Serif", Font.BOLD, 30));
             filmTablePane1.setFont(new Font("Serif", Font.PLAIN, 30));
+            amountOfTimesFullyWatchedString.setFont(new Font("Serif", Font.BOLD, 30));
+            amountOfTimesFullyWatched.setFont(new Font("Serif", Font.BOLD, 40));
             filmTablePane1.setBackground(Color.WHITE);
 
             allFilms.add(filmInformation);
             allFilms.add(filmTablePane1);
+            allFilms.add(amountOfTimesFullyWatchedString);
+            allFilms.add(amountOfTimesFullyWatched);
+
+
 
             firstFilmInformationRs.close();
         } catch (Exception e) {
@@ -217,8 +241,17 @@ public class ContainerManagement {
                         JTable filmInformationTable = new JTable(tableBuilder.buildTableModel(filmInformationRs));
 
                         allFilms.remove(filmTablePane1);
+                        allFilms.remove(amountOfTimesFullyWatchedString);
+                        allFilms.remove(amountOfTimesFullyWatched);
                         filmTablePane1 = new JScrollPane(filmInformationTable);
+                        amountOfTimesFullyWatched = new JLabel(String.valueOf(connection.getFilmAmountOfTimesFullWatches(itemEvent.getItem())));
+
+                        amountOfTimesFullyWatched.setFont(new Font("Serif", Font.BOLD, 40));
+
                         allFilms.add(filmTablePane1);
+                        allFilms.add(amountOfTimesFullyWatchedString);
+                        allFilms.add(amountOfTimesFullyWatched);
+
 
                         allFilms.revalidate();
                         allFilms.repaint();

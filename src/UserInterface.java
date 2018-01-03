@@ -1,10 +1,7 @@
-import javafx.scene.layout.BorderStroke;
-
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.*;
-import javax.swing.border.Border;
 
 public class UserInterface implements Runnable {
 
@@ -28,7 +25,6 @@ public class UserInterface implements Runnable {
 
     private void createComponents(Container container) {
         containerManagement.accountsContainer();
-        containerManagement.filmUnderSixteenContainer();
         containerManagement.singleProfileAccounts();
         containerManagement.getAllSeriesContainer();
         containerManagement.getAllFilmsContainer();
@@ -48,7 +44,6 @@ public class UserInterface implements Runnable {
 
         //Left buttons creation
         JButton accounts = new JButton("Accounts");
-        JButton filmUnderSixteen = new JButton("Films onder de 16 jaar");
         JButton accountWithOneProfile = new JButton("Accounts met 1 profiel");
         JButton series = new JButton("Series");
         JButton films = new JButton("Films");
@@ -60,21 +55,6 @@ public class UserInterface implements Runnable {
             {
                 Container testCurrentContainer = containerManagement.grabCurrentContainer();
                 Container newContainer = containerManagement.get("allAccounts");
-                if (testCurrentContainer != null) {
-                    frame.getContentPane().remove(testCurrentContainer);
-                }
-                frame.getContentPane().add(newContainer, BorderLayout.CENTER);
-
-                addNewContainer(newContainer);
-            }
-        });
-
-        filmUnderSixteen.addActionListener(new ActionListener()
-        {
-            public void actionPerformed(ActionEvent e)
-            {
-                Container testCurrentContainer = containerManagement.grabCurrentContainer();
-                Container newContainer = containerManagement.get("filmUnderSixteen");
                 if (testCurrentContainer != null) {
                     frame.getContentPane().remove(testCurrentContainer);
                 }
@@ -131,11 +111,10 @@ public class UserInterface implements Runnable {
 
         //Add left buttons to JPanel inside 1
         leftPanelInside1.add(accounts);
-        leftPanelInside1.add(filmUnderSixteen);
         leftPanelInside1.add(accountWithOneProfile);
 
         //Add left buttons to JPanel inside 2
-        leftPanelInside2.add(series);
+        leftPanelInside1.add(series);
         leftPanelInside2.add(films);
 
         leftPanel.setBorder(BorderFactory.createLineBorder(Color.BLUE));
