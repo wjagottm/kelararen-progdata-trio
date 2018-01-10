@@ -148,6 +148,7 @@ public class UserInterface implements Runnable {
         return footerContent;
     }
 
+    //Container repainter
     public void addNewContainer(Container container) {
         containerManagement.placeCurrentContainer(container);
 
