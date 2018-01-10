@@ -17,11 +17,11 @@ public class SQLConnection {
         try {
             Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
             con = DriverManager.getConnection(connectionUrl);
-            String SQL = "SELECT * FROM account";
+            String SQL = "SELECT * FROM Users";
             stmt = con.createStatement();
             rs = stmt.executeQuery(SQL);
             while (rs.next()) {
-                accounts.add(rs.getInt("AbonneeNummer"));
+                accounts.add(rs.getInt("SubscriberId"));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -46,21 +46,21 @@ public class SQLConnection {
         ResultSet rs = null;
         Connection con = null;
         Statement stmt = null;
-        String abonneeNummer = null;
+        String SubscriberId = null;
         try {
             Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
             con = DriverManager.getConnection(connectionUrl);
-            String SQL = "SELECT TOP 1 * FROM account";
+            String SQL = "SELECT TOP 1 * FROM Users";
             stmt = con.createStatement();
             rs = stmt.executeQuery(SQL);
             while (rs.next()) {
-                abonneeNummer = String.valueOf(rs.getInt("AbonneeNummer"));
+                SubscriberId = String.valueOf(rs.getInt("SubscriberId"));
             }
 
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return abonneeNummer;
+        return SubscriberId;
     }
 
     public ResultSet getAccountInformation(Object account) {
@@ -70,7 +70,7 @@ public class SQLConnection {
         try {
             Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
             con = DriverManager.getConnection(connectionUrl);
-            String SQL = "SELECT * FROM account WHERE Abonneenummer = '" + String.valueOf(account) + "'";
+            String SQL = "SELECT * FROM Users WHERE SubscriberId = '" + String.valueOf(account) + "'";
             stmt = con.createStatement();
             rs = stmt.executeQuery(SQL);
 
@@ -87,7 +87,7 @@ public class SQLConnection {
         try {
             Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
             con = DriverManager.getConnection(connectionUrl);
-            String SQL = "SELECT TOP 1* FROM account";
+            String SQL = "SELECT TOP 1* FROM Users";
             stmt = con.createStatement();
             rs = stmt.executeQuery(SQL);
 
@@ -104,7 +104,7 @@ public class SQLConnection {
         try {
             Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
             con = DriverManager.getConnection(connectionUrl);
-            String SQL = "SELECT Account.AbonneeNummer, Film.Titel, Film.Id FROM Film, Account, Profiel, Bekeken, Aanbod WHERE Account.AbonneeNummer = '" + account + "' AND Account.AbonneeNummer = Profiel.AbonneeNummer AND Profiel.AbonneeNummer = Bekeken.AbonneeNummer AND Bekeken.Gezien = Aanbod.Id AND Aanbod.Id = Film.Id GROUP BY Account.AbonneeNummer, Film.Titel, Film.Id ORDER BY Account.AbonneeNummer";
+            String SQL = "SELECT Users.SubscriberId, Movies.Title, Movies.Id FROM Movies, Users, Profiles, Watched, Library WHERE Users.SubscriberId = '" + account + "' AND Users.SubscriberId = Profiles.SubscriberId AND Profiles.SubscriberId = Watched.SubscriberId AND Watched.Watched = Library.Id AND Library.Id = Movies.Id GROUP BY Users.SubscriberId, Movies.Title, Movies.Id ORDER BY Users.SubscriberId";
             stmt = con.createStatement();
             rs = stmt.executeQuery(SQL);
 
@@ -119,11 +119,11 @@ public class SQLConnection {
         try {
             Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
             con = DriverManager.getConnection(connectionUrl);
-            String SQL = "SELECT * FROM Film";
+            String SQL = "SELECT * FROM Movies";
             stmt = con.createStatement();
             rs = stmt.executeQuery(SQL);
             while (rs.next()) {
-                films.add(rs.getString("Titel"));
+                films.add(rs.getString("Title"));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -149,11 +149,11 @@ public class SQLConnection {
         try {
             Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
             con = DriverManager.getConnection(connectionUrl);
-            String SQL = "SELECT * FROM Serie";
+            String SQL = "SELECT * FROM Shows";
             stmt = con.createStatement();
             rs = stmt.executeQuery(SQL);
             while (rs.next()) {
-                series.add(rs.getString("Serie"));
+                series.add(rs.getString("Show"));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -181,7 +181,7 @@ public class SQLConnection {
         try {
             Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
             con = DriverManager.getConnection(connectionUrl);
-            String SQL = "SELECT TOP 1 * FROM Film";
+            String SQL = "SELECT TOP 1 * FROM Movies";
             stmt = con.createStatement();
             rs = stmt.executeQuery(SQL);
 
@@ -199,7 +199,7 @@ public class SQLConnection {
         try {
             Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
             con = DriverManager.getConnection(connectionUrl);
-            String SQL = "SELECT * FROM Film WHERE Titel = '"+ newFilmString +"'";
+            String SQL = "SELECT * FROM Movies WHERE Title = '"+ newFilmString +"'";
             stmt = con.createStatement();
             rs = stmt.executeQuery(SQL);
 
@@ -217,11 +217,11 @@ public class SQLConnection {
         try {
             Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
             con = DriverManager.getConnection(connectionUrl);
-            String SQL = "SELECT TOP 1 * FROM Film";
+            String SQL = "SELECT TOP 1 * FROM Movies";
             stmt = con.createStatement();
             rs = stmt.executeQuery(SQL);
             while(rs.next()) {
-                filmTitle = rs.getString("Titel").replaceAll("'", "''");
+                filmTitle = rs.getString("Title").replaceAll("'", "''");
             }
 
         } catch (Exception e) {
@@ -238,7 +238,7 @@ public class SQLConnection {
         try {
             Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
             con = DriverManager.getConnection(connectionUrl);
-            String SQL = "SELECT Bekeken.AbonneeNummer FROM Film, Aanbod, Bekeken WHERE Bekeken.Percentage = '100' and film.Id = aanbod.Id and Aanbod.Id = Bekeken.Gezien and film.titel = '" + getFirstFilmTitle() + "'";
+            String SQL = "SELECT Watched.SubscriberId FROM Movies, Library, Watched WHERE Watched.Percentage = '100' and Movies.Id = Library.Id and Library.Id = Watched.Watched and Movies.Title = '" + getFirstFilmTitle() + "'";
             stmt = con.createStatement();
             rs = stmt.executeQuery(SQL);
             while(rs.next()) {
@@ -260,7 +260,7 @@ public class SQLConnection {
         try {
             Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
             con = DriverManager.getConnection(connectionUrl);
-            String SQL = "SELECT Bekeken.AbonneeNummer FROM Film, Aanbod, Bekeken WHERE Bekeken.Percentage = '100' and film.Id = aanbod.Id and Aanbod.Id = Bekeken.Gezien and film.titel = '" + newFilmString + "'";
+            String SQL = "SELECT Watched.SubscriberId FROM Movies, Library, Watched WHERE Watched.Percentage = '100' and Movies.Id = Library.Id and Library.Id = Watched.Watched and Movies.Title = '" + newFilmString + "'";
             stmt = con.createStatement();
             rs = stmt.executeQuery(SQL);
             while(rs.next()) {
@@ -280,7 +280,7 @@ public class SQLConnection {
         try {
             Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
             con = DriverManager.getConnection(connectionUrl);
-            String SQL = "SELECT * FROM Film WHERE (Tijdsduur) IN (SELECT MAX(Tijdsduur) FROM Film);";
+            String SQL = "SELECT * FROM Movies WHERE (Length) IN (SELECT MAX(Length) FROM Movies);";
             stmt = con.createStatement();
             rs = stmt.executeQuery(SQL);
 
