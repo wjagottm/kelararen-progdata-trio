@@ -14,6 +14,11 @@ public class ContainerManagement {
     private idGrabber idGrabber = new idGrabber();
     private tableBuilder tableBuilder = new tableBuilder();
 
+    private Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+    private int tableHeight = (int) Math.round(screenSize.getHeight()) / 64;
+    private int bigFontSize = (int) Math.round(screenSize.getHeight()) / 64;
+    private int smallFontSize = (int) Math.round(screenSize.getHeight()) / 96;
+
     //Variables for account tab
     private JScrollPane tablePane1 = null;
     private JScrollPane tablePane2 = null;
@@ -59,7 +64,8 @@ public class ContainerManagement {
 
         //Design settings
         accountContainer.setLayout(new BoxLayout(accountContainer, BoxLayout.Y_AXIS));
-        accountList.setFont(new Font("Serif", Font.PLAIN, 20));
+        accountList.setFont(new Font("Serif", Font.PLAIN, smallFontSize));
+        watchedFilms.setFont(new Font("Serif", Font.BOLD, bigFontSize));
         accountList.setMaximumSize(new Dimension(8000,50));
         accountList.setBackground(Color.getHSBColor(167,0,10));
 
@@ -72,20 +78,27 @@ public class ContainerManagement {
             if (!accountWatchedFilmsRs.isBeforeFirst() ) {
                 this.tablePane2 = null;
             } else {
-                JTable accountWatchedFilmsTable = new JTable(tableBuilder.buildTableModel(accountWatchedFilmsRs));
+                JTable accountWatchedFilmsTable = new JTable(tableBuilder.buildTableModel(accountWatchedFilmsRs)){
+                    public boolean isCellEditable(int row,int column){
+                        return false;
+                    }
+                };
+                accountWatchedFilmsTable.setRowHeight(tableHeight);
                 tablePane2 = new JScrollPane(accountWatchedFilmsTable);
             }
 
-            JTable table = new JTable(tableBuilder.buildTableModel(accountInformationRs));
+            JTable table = new JTable(tableBuilder.buildTableModel(accountInformationRs)){
+                public boolean isCellEditable(int row,int column){
+                    return false;
+                }
+            };
+            table.setRowHeight(tableHeight);
             tablePane1 = new JScrollPane(table);
 
             JLabel profileInformation = new JLabel("Profile information:");
 
             //Design settings
-            profileInformation.setFont(new Font("Serif", Font.BOLD, 30));
-            tablePane1.setFont(new Font("Serif", Font.PLAIN, 30));
             tablePane1.setBackground(Color.WHITE);
-            watchedFilms.setFont(new Font("Serif", Font.BOLD, 30));
 
             accountContainer.add(profileInformation);
             accountContainer.add(tablePane1);
@@ -114,7 +127,12 @@ public class ContainerManagement {
                                 tablePane2 = null;
                             }
                         } else {
-                            JTable accountWatchedFilmsTable = new JTable(tableBuilder.buildTableModel(accountWatchedFilmsRs));
+                            JTable accountWatchedFilmsTable = new JTable(tableBuilder.buildTableModel(accountWatchedFilmsRs)){
+                                public boolean isCellEditable(int row,int column){
+                                    return false;
+                                }
+                            };
+                            accountWatchedFilmsTable.setRowHeight(tableHeight);
 
                             if(tablePane2 != null) {
                                 accountContainer.remove(tablePane2);
@@ -122,7 +140,13 @@ public class ContainerManagement {
 
                             tablePane2 = new JScrollPane(accountWatchedFilmsTable);
                         }
-                        JTable accountInformationTable = new JTable(tableBuilder.buildTableModel(accountInformationRs));
+                        JTable accountInformationTable = new JTable(tableBuilder.buildTableModel(accountInformationRs)){
+                            public boolean isCellEditable(int row,int column){
+                                return false;
+                            }
+                        };
+
+                        accountInformationTable.setRowHeight(tableHeight);
 
                         accountContainer.remove(tablePane1);
                         tablePane1 = new JScrollPane(accountInformationTable);
@@ -156,7 +180,6 @@ public class ContainerManagement {
 
         //Design settings
         singleProfileAccounts.setLayout(new BoxLayout(singleProfileAccounts, BoxLayout.Y_AXIS));
-        singleProfileAccountString.setFont(new Font("Serif", Font.BOLD, 30));
 
         singleProfileAccounts.add(singleProfileAccountString);
         ResultSet singleProfileAccountRs = connection.getSingleProfileAccounts();
@@ -165,11 +188,18 @@ public class ContainerManagement {
             if (!singleProfileAccountRs.isBeforeFirst()) {
                 JLabel noAccountsFoundString = new JLabel("No Accounts found in database with one profile.");
 
-                noAccountsFoundString.setFont(new Font("Serif", Font.PLAIN, 30));
+                noAccountsFoundString.setFont(new Font("Serif", Font.PLAIN, bigFontSize));
 
                 singleProfileAccounts.add(noAccountsFoundString);
             } else {
-                JScrollPane singleProfileAccountsPane = new JScrollPane(new JTable(tableBuilder.buildTableModel(singleProfileAccountRs)));
+                JTable singleProfileAccountsTable = new JTable(tableBuilder.buildTableModel(singleProfileAccountRs)){
+                    public boolean isCellEditable(int row,int column){
+                        return false;
+                    }
+                };
+
+                singleProfileAccountsTable.setRowHeight(tableHeight);
+                JScrollPane singleProfileAccountsPane = new JScrollPane(singleProfileAccountsTable);
                 singleProfileAccounts.add(singleProfileAccountsPane);
             }
         } catch (Exception e) {
@@ -190,11 +220,8 @@ public class ContainerManagement {
 
         //Design
         allSeries.setLayout(new BoxLayout(allSeries, BoxLayout.Y_AXIS));
-        allSerieTitles.setFont(new Font("Serif", Font.PLAIN, 20));
-        allProfileNames.setFont(new Font("Serif", Font.PLAIN, 20));
-        seriesString.setFont(new Font("Serif", Font.BOLD, 30));
-        accountsString.setFont(new Font("Serif", Font.BOLD, 30));
-        serieInformationString.setFont(new Font("Serif", Font.BOLD, 30));
+        allSerieTitles.setFont(new Font("Serif", Font.PLAIN, smallFontSize));
+        allProfileNames.setFont(new Font("Serif", Font.PLAIN, smallFontSize));
         allSerieTitles.setMaximumSize(new Dimension(8000,50));
         allSerieTitles.setBackground(Color.getHSBColor(167,0,10));
         allProfileNames.setMaximumSize(new Dimension(8000,50));
@@ -231,8 +258,13 @@ public class ContainerManagement {
 
         ResultSet serieInformation = connection.getSerieInformation(allSerieTitles.getSelectedItem(), allProfileNames.getSelectedItem());
         try {
-            serieInformationPane = new JScrollPane(new JTable(tableBuilder.buildTableModel(serieInformation)));
-
+            JTable serieInformationTable = new JTable(tableBuilder.buildTableModel(serieInformation)){
+                public boolean isCellEditable(int row,int column){
+                    return false;
+                }
+            };
+            serieInformationTable.setRowHeight(tableHeight);
+            serieInformationPane = new JScrollPane(serieInformationTable);
             allSeries.add(serieInformationPane);
         } catch (Exception e) {
             e.printStackTrace();
@@ -246,15 +278,27 @@ public class ContainerManagement {
             if (serieInformationPane != null) {
                 allSeries.remove(serieInformationPane);
 
-                serieInformationPane = new JScrollPane(new JTable(tableBuilder.buildTableModel(serieInformation)));
+                JTable serieInformationTable = new JTable(tableBuilder.buildTableModel(serieInformation)){
+                    public boolean isCellEditable(int row,int column){
+                        return false;
+                    }
+                };
+                serieInformationTable.setRowHeight(tableHeight);
 
+                serieInformationPane = new JScrollPane(serieInformationTable);
                 allSeries.add(serieInformationPane);
 
                 allSeries.revalidate();
                 allSeries.repaint();
             } else {
-                serieInformationPane = new JScrollPane(new JTable(tableBuilder.buildTableModel(serieInformation)));
+                JTable serieInformationTable = new JTable(tableBuilder.buildTableModel(serieInformation)){
+                    public boolean isCellEditable(int row,int column){
+                        return false;
+                    }
+                };
+                serieInformationTable.setRowHeight(tableHeight);
 
+                serieInformationPane = new JScrollPane(serieInformationTable);
                 allSeries.add(serieInformationPane);
 
                 allSeries.revalidate();
@@ -269,11 +313,17 @@ public class ContainerManagement {
         Container allFilms = new Container();
 
         JLabel longestFilmDurationUnderAgeSixteenString = new JLabel("Movie with longest duration for PEGI 16:");
-        longestFilmDurationUnderAgeSixteenString.setFont(new Font("Serif", Font.BOLD, 30));
 
         ResultSet longestFilmDurationUnderAgeSixteen = connection.getLongestFilmDurationUnderAgeSixteen();
         try {
-            JScrollPane longestFilmDurationUnderAgeSixteenPane = new JScrollPane(new JTable(tableBuilder.buildTableModel(longestFilmDurationUnderAgeSixteen)));
+            JTable longestFilmDurationUnderAgeSixteenTable = new JTable(tableBuilder.buildTableModel(longestFilmDurationUnderAgeSixteen)){
+                public boolean isCellEditable(int row,int column){
+                    return false;
+                }
+            };
+            longestFilmDurationUnderAgeSixteenTable.setRowHeight(tableHeight);
+
+            JScrollPane longestFilmDurationUnderAgeSixteenPane = new JScrollPane(longestFilmDurationUnderAgeSixteenTable);
             longestFilmDurationUnderAgeSixteenPane.setPreferredSize(new Dimension(3000,80));
 
             allFilms.add(longestFilmDurationUnderAgeSixteenString);
@@ -290,17 +340,21 @@ public class ContainerManagement {
 
         //Design
         allFilms.setLayout(new BoxLayout(allFilms, BoxLayout.Y_AXIS));
-        allFilmTitles.setFont(new Font("Serif", Font.PLAIN, 20));
+        allFilmTitles.setFont(new Font("Serif", Font.PLAIN, smallFontSize));
         allFilmTitles.setMaximumSize(new Dimension(8000,50));
         allFilmTitles.setBackground(Color.getHSBColor(167,0,10));
-        allFilmTitlesString.setFont(new Font("Serif", Font.BOLD, 30));
 
         allFilms.add(allFilmTitlesString);
         allFilms.add(allFilmTitles);
 
         ResultSet firstFilmInformationRs = connection.getFirstFilmInformation();
         try {
-            JTable filmTable = new JTable(tableBuilder.buildTableModel(firstFilmInformationRs));
+            JTable filmTable = new JTable(tableBuilder.buildTableModel(firstFilmInformationRs)){
+                public boolean isCellEditable(int row,int column){
+                    return false;
+                }
+            };
+            filmTable.setRowHeight(tableHeight);
             filmTablePane1 = new JScrollPane(filmTable);
 
             JLabel filmInformation = new JLabel("Movie information:");
@@ -308,10 +362,7 @@ public class ContainerManagement {
             amountOfTimesFullyWatched = new JLabel(String.valueOf(connection.getFirstFilmAmountOfFullWatches()));
 
 
-            filmInformation.setFont(new Font("Serif", Font.BOLD, 30));
-            filmTablePane1.setFont(new Font("Serif", Font.PLAIN, 30));
-            amountOfTimesFullyWatchedString.setFont(new Font("Serif", Font.BOLD, 30));
-            amountOfTimesFullyWatched.setFont(new Font("Serif", Font.BOLD, 40));
+            amountOfTimesFullyWatched.setFont(new Font("Serif", Font.BOLD, bigFontSize));
             filmTablePane1.setBackground(Color.WHITE);
 
             allFilms.add(filmInformation);
@@ -332,7 +383,12 @@ public class ContainerManagement {
                 if(state == 1) {
                     ResultSet filmInformationRs = connection.getFilmInformation(itemEvent.getItem());
                     try{
-                        JTable filmInformationTable = new JTable(tableBuilder.buildTableModel(filmInformationRs));
+                        JTable filmInformationTable = new JTable(tableBuilder.buildTableModel(filmInformationRs)){
+                            public boolean isCellEditable(int row,int column){
+                                return false;
+                            }
+                        };
+                        filmInformationTable.setRowHeight(tableHeight);
 
                         allFilms.remove(filmTablePane1);
                         allFilms.remove(amountOfTimesFullyWatchedString);
@@ -340,7 +396,7 @@ public class ContainerManagement {
                         filmTablePane1 = new JScrollPane(filmInformationTable);
                         amountOfTimesFullyWatched = new JLabel(String.valueOf(connection.getFilmAmountOfTimesFullWatches(itemEvent.getItem())));
 
-                        amountOfTimesFullyWatched.setFont(new Font("Serif", Font.BOLD, 40));
+                        amountOfTimesFullyWatched.setFont(new Font("Serif", Font.BOLD, bigFontSize));
 
                         allFilms.add(filmTablePane1);
                         allFilms.add(amountOfTimesFullyWatchedString);

@@ -2,6 +2,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.*;
+import javax.swing.plaf.FontUIResource;
 
 public class UserInterface implements Runnable {
 
@@ -11,8 +12,16 @@ public class UserInterface implements Runnable {
     @Override
     public void run() {
         frame = new JFrame("Netflix Statistix");
+
+        //Design settings
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         frame.setPreferredSize(new Dimension((int) Math.round(screenSize.getWidth()) / 2, (int) Math.round(screenSize.getHeight()) / 2));
+
+        int bigFontSize = (int) Math.round(screenSize.getHeight()) / 64;
+        int smallFontSize = (int) Math.round(screenSize.getHeight()) / 96;
+        setUIFont (new javax.swing.plaf.FontUIResource("Serif",Font.BOLD,bigFontSize));
+        UIManager.put("Button.font", new FontUIResource(new Font("Sans-serif", Font.PLAIN, smallFontSize)));
+        UIManager.put("Table.font", new FontUIResource(new Font("Sans-serif", Font.PLAIN, smallFontSize)));
 
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
@@ -22,6 +31,16 @@ public class UserInterface implements Runnable {
 
         frame.pack();
         frame.setVisible(true);
+    }
+
+    private static void setUIFont (javax.swing.plaf.FontUIResource f){
+        java.util.Enumeration keys = UIManager.getDefaults().keys();
+        while (keys.hasMoreElements()) {
+            Object key = keys.nextElement();
+            Object value = UIManager.get (key);
+            if (value instanceof javax.swing.plaf.FontUIResource)
+                UIManager.put (key, f);
+        }
     }
 
     private void createComponents(Container container) {
