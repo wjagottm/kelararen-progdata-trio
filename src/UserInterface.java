@@ -8,17 +8,16 @@ public class UserInterface implements Runnable {
 
     private JFrame frame;
     private ContainerManagement containerManagement = new ContainerManagement();
+    private Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+    private int bigFontSize = (int) Math.round(screenSize.getHeight()) / 64;
+    private int smallFontSize = (int) Math.round(screenSize.getHeight()) / 96;
 
     @Override
     public void run() {
         frame = new JFrame("Netflix Statistix");
 
         //Design settings
-        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         frame.setPreferredSize(new Dimension((int) Math.round(screenSize.getWidth()) / 2, (int) Math.round(screenSize.getHeight()) / 2));
-
-        int bigFontSize = (int) Math.round(screenSize.getHeight()) / 64;
-        int smallFontSize = (int) Math.round(screenSize.getHeight()) / 96;
         setUIFont (new javax.swing.plaf.FontUIResource("Serif",Font.BOLD,bigFontSize));
         UIManager.put("Button.font", new FontUIResource(new Font("Sans-serif", Font.PLAIN, smallFontSize)));
         UIManager.put("Table.font", new FontUIResource(new Font("Sans-serif", Font.PLAIN, smallFontSize)));
@@ -158,8 +157,8 @@ public class UserInterface implements Runnable {
         JLabel creatorNames = new JLabel("Informatica 2017, 23IVT1C1, Kelly, Rene, Arantxio");
 
         //Set JLabel text size
-        projectName.setFont(new Font("Serif", Font.BOLD, 30));
-        creatorNames.setFont(new Font("Serif", Font.BOLD, 20));
+        projectName.setFont(new Font("Serif", Font.BOLD, bigFontSize));
+        creatorNames.setFont(new Font("Serif", Font.BOLD, smallFontSize));
 
         //Add JLabel to JPanel
         footerContent.add(projectName);
