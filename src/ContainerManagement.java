@@ -21,7 +21,6 @@ public class ContainerManagement {
 
     //Variables for film tab
     private JScrollPane filmTablePane1 = null;
-    private JScrollPane filmTablePane2 = null;
     private JLabel amountOfTimesFullyWatchedString = null;
     private JLabel amountOfTimesFullyWatched = null;
 

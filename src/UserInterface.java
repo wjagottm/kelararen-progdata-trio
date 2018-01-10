@@ -44,7 +44,7 @@ public class UserInterface implements Runnable {
 
         //Left buttons creation
         JButton accounts = new JButton("Accounts");
-        JButton accountWithOneProfile = new JButton("Accounts met 1 profiel");
+        JButton accountWithOneProfile = new JButton("Accounts with 1 profile");
         JButton series = new JButton("Series");
         JButton films = new JButton("Films");
 
