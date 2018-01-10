@@ -12,7 +12,7 @@ public class UserInterface implements Runnable {
     public void run() {
         frame = new JFrame("Netflix Statistix");
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        frame.setPreferredSize(new Dimension((int) Math.round(screenSize.getWidth()) / 4, (int) Math.round(screenSize.getHeight()) / 3));
+        frame.setPreferredSize(new Dimension((int) Math.round(screenSize.getWidth()) / 2, (int) Math.round(screenSize.getHeight()) / 2));
 
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 

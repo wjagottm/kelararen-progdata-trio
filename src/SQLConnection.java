@@ -256,6 +256,27 @@ public class SQLConnection {
         return rs;
     }
 
+    public ResultSet getSerieInformation(Object film, Object account) {
+        ResultSet rs = null;
+        Connection con = null;
+        Statement stmt = null;
+        String newFilmString = String.valueOf(film).replaceAll("'","''");
+        String newAccountString = String.valueOf(account).replaceAll("'","''");
+        try {
+            Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+            con = DriverManager.getConnection(connectionUrl);
+            String SQL = "SELECT Episodes.*, ISNULL(WatchedId.AvgPercentage,0) AS avgAmountWatched, ISNULL(Profilename, '" + newAccountString + "') AS AccountName FROM Episodes LEFT JOIN (SELECT Watched.Watched, AVG(ISNULL(Percentage, 0)) AS AvgPercentage, Profilename FROM Watched WHERE ProfileName = '" + newAccountString + "' GROUP BY Watched.Watched, Profilename) AS WatchedId ON Episodes.Id = WatchedId.Watched WHERE Episodes.Show = '" + newFilmString + "' ORDER BY Id";
+            stmt = con.createStatement();
+            rs = stmt.executeQuery(SQL);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return rs;
+    }
+
+
+
     public String getFirstFilmTitle() {
         ResultSet rs = null;
         Connection con = null;

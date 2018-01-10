@@ -25,6 +25,7 @@ public class ContainerManagement {
     private JLabel amountOfTimesFullyWatched = null;
 
     //Variables for series tab
+    private JScrollPane serieInformationPane = null;
 
     public ContainerManagement() {
         this.containers = new HashMap<String, Container>();
@@ -185,6 +186,7 @@ public class ContainerManagement {
         JComboBox allProfileNames = idGrabber.getAllProfileNames();
         JLabel seriesString = new JLabel("Select a show:");
         JLabel accountsString = new JLabel("Select a account:");
+        JLabel serieInformationString = new JLabel("Show Information:");
 
         //Design
         allSeries.setLayout(new BoxLayout(allSeries, BoxLayout.Y_AXIS));
@@ -192,6 +194,7 @@ public class ContainerManagement {
         allProfileNames.setFont(new Font("Serif", Font.PLAIN, 20));
         seriesString.setFont(new Font("Serif", Font.BOLD, 30));
         accountsString.setFont(new Font("Serif", Font.BOLD, 30));
+        serieInformationString.setFont(new Font("Serif", Font.BOLD, 30));
         allSerieTitles.setMaximumSize(new Dimension(8000,50));
         allSerieTitles.setBackground(Color.getHSBColor(167,0,10));
         allProfileNames.setMaximumSize(new Dimension(8000,50));
@@ -201,7 +204,8 @@ public class ContainerManagement {
             public void itemStateChanged(ItemEvent itemEvent) {
                 int state = itemEvent.getStateChange();
                 if (state == 1) {
-                    System.out.println("Values selected: " + itemEvent.getItem() + ", " + allProfileNames.getSelectedItem());
+                    ResultSet serieInformation = connection.getSerieInformation(itemEvent.getItem(), allProfileNames.getSelectedItem());
+                    addShowInformationPanel(serieInformation, allSeries);
                 }
             }
         };
@@ -210,7 +214,8 @@ public class ContainerManagement {
             public void itemStateChanged(ItemEvent itemEvent) {
                 int state = itemEvent.getStateChange();
                 if (state == 1) {
-                    System.out.println("Values selected: " + allSerieTitles.getSelectedItem() + ", " + itemEvent.getItem());
+                    ResultSet serieInformation = connection.getSerieInformation(allSerieTitles.getSelectedItem(), itemEvent.getItem());
+                    addShowInformationPanel(serieInformation, allSeries);
                 }
             }
         };
@@ -222,8 +227,42 @@ public class ContainerManagement {
         allSeries.add(allProfileNames);
         allSeries.add(seriesString);
         allSeries.add(allSerieTitles);
+        allSeries.add(serieInformationString);
+
+        ResultSet serieInformation = connection.getSerieInformation(allSerieTitles.getSelectedItem(), allProfileNames.getSelectedItem());
+        try {
+            serieInformationPane = new JScrollPane(new JTable(tableBuilder.buildTableModel(serieInformation)));
+
+            allSeries.add(serieInformationPane);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         add("allSeries", allSeries);
+    }
+
+    private void addShowInformationPanel(ResultSet serieInformation, Container allSeries) {
+        try {
+            if (serieInformationPane != null) {
+                allSeries.remove(serieInformationPane);
+
+                serieInformationPane = new JScrollPane(new JTable(tableBuilder.buildTableModel(serieInformation)));
+
+                allSeries.add(serieInformationPane);
+
+                allSeries.revalidate();
+                allSeries.repaint();
+            } else {
+                serieInformationPane = new JScrollPane(new JTable(tableBuilder.buildTableModel(serieInformation)));
+
+                allSeries.add(serieInformationPane);
+
+                allSeries.revalidate();
+                allSeries.repaint();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public void getAllFilmsContainer() {
