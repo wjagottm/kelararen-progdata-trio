@@ -128,6 +128,7 @@ public class ContainerManagement {
                         accountContainer.add(tablePane1);
 
                         if(tablePane2 != null) {
+                            accountContainer.add(watchedFilms);
                             accountContainer.add(tablePane2);
                         }
 
@@ -150,8 +151,30 @@ public class ContainerManagement {
 
     public void singleProfileAccounts() {
         Container singleProfileAccounts = new Container();
+        JLabel singleProfileAccountString = new JLabel("Single profile Accounts: ");
+
+        //Design settings
         singleProfileAccounts.setLayout(new BoxLayout(singleProfileAccounts, BoxLayout.Y_AXIS));
-        singleProfileAccounts.add(new JLabel("Single profile Accounts"));
+        singleProfileAccountString.setFont(new Font("Serif", Font.BOLD, 30));
+
+        singleProfileAccounts.add(singleProfileAccountString);
+        ResultSet singleProfileAccountRs = connection.getSingleProfileAccounts();
+
+        try {
+            if (!singleProfileAccountRs.isBeforeFirst()) {
+                JLabel noAccountsFoundString = new JLabel("No Accounts found in database with one profile.");
+
+                noAccountsFoundString.setFont(new Font("Serif", Font.PLAIN, 30));
+
+                singleProfileAccounts.add(noAccountsFoundString);
+            } else {
+                JScrollPane singleProfileAccountsPane = new JScrollPane(new JTable(tableBuilder.buildTableModel(singleProfileAccountRs)));
+                singleProfileAccounts.add(singleProfileAccountsPane);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         add("singleProfileAccounts", singleProfileAccounts);
     }
 
@@ -159,13 +182,16 @@ public class ContainerManagement {
         Container allSeries = new Container();
 
         JComboBox allSerieTitles = idGrabber.getAllSerieTitles();
+        JLabel seriesString = new JLabel("Shows:");
 
         //Design
         allSeries.setLayout(new BoxLayout(allSeries, BoxLayout.Y_AXIS));
         allSerieTitles.setFont(new Font("Serif", Font.PLAIN, 20));
+        seriesString.setFont(new Font("Serif", Font.BOLD, 30));
         allSerieTitles.setMaximumSize(new Dimension(8000,50));
         allSerieTitles.setBackground(Color.getHSBColor(167,0,10));
 
+        allSeries.add(seriesString);
         allSeries.add(allSerieTitles);
         add("allSeries", allSeries);
     }
@@ -173,7 +199,7 @@ public class ContainerManagement {
     public void getAllFilmsContainer() {
         Container allFilms = new Container();
 
-        JLabel longestFilmDurationUnderAgeSixteenString = new JLabel("Film with longest duration for PEGI 16:");
+        JLabel longestFilmDurationUnderAgeSixteenString = new JLabel("Movie with longest duration for PEGI 16:");
         longestFilmDurationUnderAgeSixteenString.setFont(new Font("Serif", Font.BOLD, 30));
 
         ResultSet longestFilmDurationUnderAgeSixteen = connection.getLongestFilmDurationUnderAgeSixteen();
@@ -190,7 +216,7 @@ public class ContainerManagement {
         JSeparator seperator = new JSeparator(SwingConstants.HORIZONTAL);
         allFilms.add(seperator);
 
-        JLabel allFilmTitlesString = new JLabel("Select a film title:");
+        JLabel allFilmTitlesString = new JLabel("Select a Movie title:");
         JComboBox allFilmTitles = idGrabber.getAllFilmTitles();
 
         //Design
@@ -208,7 +234,7 @@ public class ContainerManagement {
             JTable filmTable = new JTable(tableBuilder.buildTableModel(firstFilmInformationRs));
             filmTablePane1 = new JScrollPane(filmTable);
 
-            JLabel filmInformation = new JLabel("Film information:");
+            JLabel filmInformation = new JLabel("Movie information:");
             amountOfTimesFullyWatchedString = new JLabel("Amount of times fully watched:");
             amountOfTimesFullyWatched = new JLabel(String.valueOf(connection.getFirstFilmAmountOfFullWatches()));
 

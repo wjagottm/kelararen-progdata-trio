@@ -97,6 +97,23 @@ public class SQLConnection {
         return rs;
     }
 
+    public ResultSet getSingleProfileAccounts() {
+        ResultSet rs = null;
+        Connection con = null;
+        Statement stmt = null;
+        try {
+            Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+            con = DriverManager.getConnection(connectionUrl);
+            String SQL = "SELECT Users.* FROM Users JOIN ( SELECT Users.SubscriberId FROM Users, Profiles WHERE Users.SubscriberId = Profiles.SubscriberId GROUP BY Users.SubscriberId HAVING Count(Profiles.SubscriberId) = 1) as singleAccountUsers ON Users.SubscriberId = singleAccountUsers.SubscriberId";
+            stmt = con.createStatement();
+            rs = stmt.executeQuery(SQL);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return rs;
+    }
+
     public ResultSet getFilmsWatchedByAccount(String account) {
         ResultSet rs = null;
         Connection con = null;

@@ -46,7 +46,7 @@ public class UserInterface implements Runnable {
         JButton accounts = new JButton("Accounts");
         JButton accountWithOneProfile = new JButton("Accounts with 1 profile");
         JButton series = new JButton("Series");
-        JButton films = new JButton("Films");
+        JButton films = new JButton("Movies");
 
         //Add Action event listeners
         accounts.addActionListener(new ActionListener()
@@ -69,6 +69,7 @@ public class UserInterface implements Runnable {
             public void actionPerformed(ActionEvent e)
             {
                 Container testCurrentContainer = containerManagement.grabCurrentContainer();
+                containerManagement.singleProfileAccounts();
                 Container newContainer = containerManagement.get("singleProfileAccounts");
                 if (testCurrentContainer != null) {
                     frame.getContentPane().remove(testCurrentContainer);
