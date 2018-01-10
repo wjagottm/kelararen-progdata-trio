@@ -312,7 +312,7 @@ public class ContainerManagement {
     public void getAllFilmsContainer() {
         Container allFilms = new Container();
 
-        JLabel longestFilmDurationUnderAgeSixteenString = new JLabel("Movie with longest duration for PEGI 16:");
+        JLabel longestFilmDurationUnderAgeSixteenString = new JLabel("Movie with longest duration for PG 16:");
 
         ResultSet longestFilmDurationUnderAgeSixteen = connection.getLongestFilmDurationUnderAgeSixteen();
         try {
