@@ -65,6 +65,7 @@ public class UserInterface implements Runnable {
             }
         });
 
+        //accountWithOneProfileButton Actionlistener
         accountWithOneProfile.addActionListener(new ActionListener()
         {
             public void actionPerformed(ActionEvent e)
@@ -81,6 +82,7 @@ public class UserInterface implements Runnable {
             }
         });
 
+        //seriesButton Actionlistener
         series.addActionListener(new ActionListener()
         {
             public void actionPerformed(ActionEvent e)
@@ -96,6 +98,7 @@ public class UserInterface implements Runnable {
             }
         });
 
+        //filmsButton Actionlistener
         films.addActionListener(new ActionListener()
         {
             public void actionPerformed(ActionEvent e)
