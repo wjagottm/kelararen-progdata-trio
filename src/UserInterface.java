@@ -11,7 +11,8 @@ public class UserInterface implements Runnable {
     @Override
     public void run() {
         frame = new JFrame("Netflix Statistix");
-        frame.setPreferredSize(new Dimension(1000, 800));
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        frame.setPreferredSize(new Dimension((int) Math.round(screenSize.getWidth()) / 4, (int) Math.round(screenSize.getHeight()) / 3));
 
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
@@ -45,7 +46,7 @@ public class UserInterface implements Runnable {
         //Left buttons creation
         JButton accounts = new JButton("Accounts");
         JButton accountWithOneProfile = new JButton("Accounts with 1 profile");
-        JButton series = new JButton("Series");
+        JButton series = new JButton("Users average view time per show");
         JButton films = new JButton("Movies");
 
         //Add Action event listeners

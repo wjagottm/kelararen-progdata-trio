@@ -161,6 +161,36 @@ public class SQLConnection {
         return films;
     }
 
+    public ArrayList<String> getAllAccountNames() {
+        ArrayList<String> accounts = new ArrayList<>();
+        try {
+            Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+            con = DriverManager.getConnection(connectionUrl);
+            String SQL = "SELECT * FROM Profiles";
+            stmt = con.createStatement();
+            rs = stmt.executeQuery(SQL);
+            while (rs.next()) {
+                accounts.add(rs.getString("ProfileName"));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (rs != null) try {
+                rs.close();
+            } catch (Exception e) {
+            }
+            if (stmt != null) try {
+                stmt.close();
+            } catch (Exception e) {
+            }
+            if (con != null) try {
+                con.close();
+            } catch (Exception e) {
+            }
+        }
+        return accounts;
+    }
+
     public ArrayList<String> getAllSerieTitles() {
         ArrayList<String> series = new ArrayList<String>();
         try {

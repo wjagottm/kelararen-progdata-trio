@@ -182,17 +182,47 @@ public class ContainerManagement {
         Container allSeries = new Container();
 
         JComboBox allSerieTitles = idGrabber.getAllSerieTitles();
-        JLabel seriesString = new JLabel("Shows:");
+        JComboBox allProfileNames = idGrabber.getAllProfileNames();
+        JLabel seriesString = new JLabel("Select a show:");
+        JLabel accountsString = new JLabel("Select a account:");
 
         //Design
         allSeries.setLayout(new BoxLayout(allSeries, BoxLayout.Y_AXIS));
         allSerieTitles.setFont(new Font("Serif", Font.PLAIN, 20));
+        allProfileNames.setFont(new Font("Serif", Font.PLAIN, 20));
         seriesString.setFont(new Font("Serif", Font.BOLD, 30));
+        accountsString.setFont(new Font("Serif", Font.BOLD, 30));
         allSerieTitles.setMaximumSize(new Dimension(8000,50));
         allSerieTitles.setBackground(Color.getHSBColor(167,0,10));
+        allProfileNames.setMaximumSize(new Dimension(8000,50));
+        allProfileNames.setBackground(Color.getHSBColor(167,0,10));
 
+        ItemListener serieListener = new ItemListener() {
+            public void itemStateChanged(ItemEvent itemEvent) {
+                int state = itemEvent.getStateChange();
+                if (state == 1) {
+                    System.out.println("Values selected: " + itemEvent.getItem() + ", " + allProfileNames.getSelectedItem());
+                }
+            }
+        };
+
+        ItemListener accountListener = new ItemListener() {
+            public void itemStateChanged(ItemEvent itemEvent) {
+                int state = itemEvent.getStateChange();
+                if (state == 1) {
+                    System.out.println("Values selected: " + allSerieTitles.getSelectedItem() + ", " + itemEvent.getItem());
+                }
+            }
+        };
+
+        allProfileNames.addItemListener(accountListener);
+        allSerieTitles.addItemListener(serieListener);
+
+        allSeries.add(accountsString);
+        allSeries.add(allProfileNames);
         allSeries.add(seriesString);
         allSeries.add(allSerieTitles);
+
         add("allSeries", allSeries);
     }
 

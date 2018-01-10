@@ -15,20 +15,29 @@ public class idGrabber {
 
     public JComboBox getAllFilmTitles() {
         ArrayList<String> films = connection.getAllFilmTitles();
-        JComboBox filmTitleBoxBox = new JComboBox();
-        for (String accountID : films) {
-            filmTitleBoxBox.addItem(accountID);
+        JComboBox filmTitleBox = new JComboBox();
+        for (String filmTitle : films) {
+            filmTitleBox.addItem(filmTitle);
         }
-        return filmTitleBoxBox;
+        return filmTitleBox;
     }
 
     public JComboBox getAllSerieTitles() {
         ArrayList<String> series = connection.getAllSerieTitles();
-        JComboBox serieTitleBoxBox = new JComboBox();
-        for (String accountID : series) {
-            serieTitleBoxBox.addItem(accountID);
+        JComboBox serieTitleBox = new JComboBox();
+        for (String serieTitle : series) {
+            serieTitleBox.addItem(serieTitle);
         }
-        return serieTitleBoxBox;
+        return serieTitleBox;
+    }
+
+    public JComboBox getAllProfileNames() {
+        ArrayList<String> accounts = connection.getAllAccountNames();
+        JComboBox accountNameBox = new JComboBox();
+        for (String accountName : accounts) {
+            accountNameBox.addItem(accountName);
+        }
+        return accountNameBox;
     }
 
 }
