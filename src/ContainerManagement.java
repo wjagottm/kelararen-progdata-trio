@@ -1,3 +1,5 @@
+import com.sun.deploy.panel.JavaPanel;
+
 import javax.swing.*;
 import java.awt.*;
 import java.sql.ResultSet;
@@ -31,6 +33,9 @@ public class ContainerManagement {
 
     //Variables for series tab
     private JScrollPane serieInformationPane = null;
+
+    //Variables for create tab
+    private JPanel createValues = null;
 
     public ContainerManagement() {
         this.containers = new HashMap<String, Container>();
@@ -186,7 +191,7 @@ public class ContainerManagement {
 
         try {
             if (!singleProfileAccountRs.isBeforeFirst()) {
-                JLabel noAccountsFoundString = new JLabel("No Accounts found in database with one profile.");
+                JLabel noAccountsFoundString = new JLabel("No Accounts found in database with one profile. Go to the create page to add new accounts and profiles.");
 
                 noAccountsFoundString.setFont(new Font("Serif", Font.PLAIN, bigFontSize));
 
@@ -416,5 +421,104 @@ public class ContainerManagement {
         allFilmTitles.addItemListener(itemListener);
 
         add("allFilms", allFilms);
+    }
+
+    public void createValuesContainer() {
+        Container createValuesContainer = new Container();
+
+        createValuesContainer.setLayout(new BoxLayout(createValuesContainer, BoxLayout.Y_AXIS));
+
+        createValues = new JPanel();
+        JLabel selectPageString = new JLabel("Select a table to edit");
+
+        JComboBox pagesBox = new JComboBox();
+        pagesBox.addItem("Users");
+        pagesBox.addItem("Profiles");
+        pagesBox.addItem("Watched");
+        pagesBox.addItem("Library");
+        pagesBox.addItem("Movies");
+        pagesBox.addItem("Episodes");
+        pagesBox.addItem("Shows");
+
+
+        pagesBox.setMaximumSize(new Dimension(8000,50));
+        pagesBox.setBackground(Color.getHSBColor(167,0,10));
+        createValues.setBackground(Color.WHITE);
+
+        JLabel UsersString = new JLabel("Add Users");
+        createValues.add(UsersString);
+
+
+        ItemListener itemListener = new ItemListener() {
+            public void itemStateChanged(ItemEvent itemEvent) {
+                int state = itemEvent.getStateChange();
+                if(state == 1) {
+                    if(itemEvent.getItem() == "Users") {
+                        createValues.removeAll();
+                        JLabel UsersString = new JLabel("Add Users");
+                        createValues.add(UsersString);
+
+                        updateCreateValuesContainer(createValuesContainer);
+                    } else if (itemEvent.getItem() == "Profiles") {
+                        createValues.removeAll();
+                        JLabel UsersString = new JLabel("Add Profiles");
+                        createValues.add(UsersString);
+
+                        updateCreateValuesContainer(createValuesContainer);
+
+                    } else if (itemEvent.getItem() == "Watched") {
+                        createValues.removeAll();
+                        JLabel UsersString = new JLabel("Add Watched");
+                        createValues.add(UsersString);
+
+                        updateCreateValuesContainer(createValuesContainer);
+
+                    } else if (itemEvent.getItem() == "Library") {
+                        createValues.removeAll();
+                        JLabel UsersString = new JLabel("Add Library");
+                        createValues.add(UsersString);
+
+                        updateCreateValuesContainer(createValuesContainer);
+
+                    } else if (itemEvent.getItem() == "Movies") {
+                        createValues.removeAll();
+                        JLabel UsersString = new JLabel("Add Movies");
+                        createValues.add(UsersString);
+
+                        updateCreateValuesContainer(createValuesContainer);
+
+                    } else if (itemEvent.getItem() == "Episodes") {
+                        createValues.removeAll();
+                        JLabel UsersString = new JLabel("Add Episodes");
+                        createValues.add(UsersString);
+
+                        updateCreateValuesContainer(createValuesContainer);
+
+                    } else if (itemEvent.getItem() == "Shows") {
+                        createValues.removeAll();
+                        JLabel UsersString = new JLabel("Add Shows");
+                        createValues.add(UsersString);
+
+                        updateCreateValuesContainer(createValuesContainer);
+                    }
+                }
+            }
+        };
+        pagesBox.addItemListener(itemListener);
+
+
+        createValuesContainer.add(selectPageString);
+        createValuesContainer.add(pagesBox);
+
+        createValuesContainer.add(createValues);
+
+        add("creator", createValuesContainer);
+    }
+
+    public void updateCreateValuesContainer(Container container) {
+        container.add(createValues);
+
+        container.revalidate();
+        container.repaint();
     }
 }

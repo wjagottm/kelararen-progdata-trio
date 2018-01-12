@@ -47,6 +47,7 @@ public class UserInterface implements Runnable {
         containerManagement.singleProfileAccounts();
         containerManagement.getAllSeriesContainer();
         containerManagement.getAllFilmsContainer();
+        containerManagement.createValuesContainer();
 
         container.add(createLeftButtons(), BorderLayout.WEST);
         container.add(footer(), BorderLayout.SOUTH);
@@ -57,8 +58,10 @@ public class UserInterface implements Runnable {
         JPanel leftPanel = new JPanel(new GridLayout(3, 1));
         JPanel leftPanelInside1 = new JPanel(new GridLayout(3, 1));
         JPanel leftPanelInside2 = new JPanel(new GridLayout(3, 1));
+        JPanel leftPanelInside3 = new JPanel(new GridLayout(3, 1));
         leftPanel.add(leftPanelInside1);
         leftPanel.add(leftPanelInside2);
+        leftPanel.add(leftPanelInside3);
 
 
         //Left buttons creation
@@ -66,6 +69,7 @@ public class UserInterface implements Runnable {
         JButton accountWithOneProfile = new JButton("Accounts with 1 profile");
         JButton series = new JButton("Users average view time per show");
         JButton films = new JButton("Movies");
+        JButton create = new JButton("Add database values");
 
         //Add Action event listeners
         accounts.addActionListener(new ActionListener()
@@ -132,6 +136,22 @@ public class UserInterface implements Runnable {
             }
         });
 
+        //filmsButton Actionlistener
+        create.addActionListener(new ActionListener()
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+                Container testCurrentContainer = containerManagement.grabCurrentContainer();
+                Container newContainer = containerManagement.get("creator");
+                if (testCurrentContainer != null) {
+                    frame.getContentPane().remove(testCurrentContainer);
+                }
+                frame.getContentPane().add(newContainer, BorderLayout.CENTER);
+
+                addNewContainer(newContainer);
+            }
+        });
+
         //Add left buttons to JPanel inside 1
         leftPanelInside1.add(accounts);
         leftPanelInside1.add(accountWithOneProfile);
@@ -140,9 +160,15 @@ public class UserInterface implements Runnable {
         leftPanelInside1.add(series);
         leftPanelInside2.add(films);
 
+        //Add left buttons to JPanel inside 3
+        leftPanelInside3.add(new JLabel(""));
+        leftPanelInside3.add(new JLabel(""));
+        leftPanelInside3.add(create);
+
         leftPanel.setBorder(BorderFactory.createLineBorder(Color.BLUE));
         leftPanel.setBackground(Color.WHITE);
         leftPanelInside2.setBackground(Color.WHITE);
+        leftPanelInside3.setBackground(Color.WHITE);
 
         //Return JPanels to caller
         return leftPanel;
