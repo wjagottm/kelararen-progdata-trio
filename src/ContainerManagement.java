@@ -80,7 +80,7 @@ public class ContainerManagement {
             } else {
                 JTable accountWatchedFilmsTable = new JTable(tableBuilder.buildTableModel(accountWatchedFilmsRs)){
                     public boolean isCellEditable(int row,int column){
-                        return false;
+                        return true;
                     }
                 };
                 accountWatchedFilmsTable.setRowHeight(tableHeight);
@@ -89,7 +89,7 @@ public class ContainerManagement {
 
             JTable table = new JTable(tableBuilder.buildTableModel(accountInformationRs)){
                 public boolean isCellEditable(int row,int column){
-                    return false;
+                    return true;
                 }
             };
             table.setRowHeight(tableHeight);
@@ -129,7 +129,7 @@ public class ContainerManagement {
                         } else {
                             JTable accountWatchedFilmsTable = new JTable(tableBuilder.buildTableModel(accountWatchedFilmsRs)){
                                 public boolean isCellEditable(int row,int column){
-                                    return false;
+                                    return true;
                                 }
                             };
                             accountWatchedFilmsTable.setRowHeight(tableHeight);
@@ -142,7 +142,7 @@ public class ContainerManagement {
                         }
                         JTable accountInformationTable = new JTable(tableBuilder.buildTableModel(accountInformationRs)){
                             public boolean isCellEditable(int row,int column){
-                                return false;
+                                return true;
                             }
                         };
 
@@ -194,7 +194,7 @@ public class ContainerManagement {
             } else {
                 JTable singleProfileAccountsTable = new JTable(tableBuilder.buildTableModel(singleProfileAccountRs)){
                     public boolean isCellEditable(int row,int column){
-                        return false;
+                        return true;
                     }
                 };
 
@@ -260,7 +260,7 @@ public class ContainerManagement {
         try {
             JTable serieInformationTable = new JTable(tableBuilder.buildTableModel(serieInformation)){
                 public boolean isCellEditable(int row,int column){
-                    return false;
+                    return true;
                 }
             };
             serieInformationTable.setRowHeight(tableHeight);
@@ -280,7 +280,7 @@ public class ContainerManagement {
 
                 JTable serieInformationTable = new JTable(tableBuilder.buildTableModel(serieInformation)){
                     public boolean isCellEditable(int row,int column){
-                        return false;
+                        return true;
                     }
                 };
                 serieInformationTable.setRowHeight(tableHeight);
@@ -293,7 +293,7 @@ public class ContainerManagement {
             } else {
                 JTable serieInformationTable = new JTable(tableBuilder.buildTableModel(serieInformation)){
                     public boolean isCellEditable(int row,int column){
-                        return false;
+                        return true;
                     }
                 };
                 serieInformationTable.setRowHeight(tableHeight);
@@ -318,7 +318,7 @@ public class ContainerManagement {
         try {
             JTable longestFilmDurationUnderAgeSixteenTable = new JTable(tableBuilder.buildTableModel(longestFilmDurationUnderAgeSixteen)){
                 public boolean isCellEditable(int row,int column){
-                    return false;
+                    return true;
                 }
             };
             longestFilmDurationUnderAgeSixteenTable.setRowHeight(tableHeight);
@@ -351,7 +351,7 @@ public class ContainerManagement {
         try {
             JTable filmTable = new JTable(tableBuilder.buildTableModel(firstFilmInformationRs)){
                 public boolean isCellEditable(int row,int column){
-                    return false;
+                    return true;
                 }
             };
             filmTable.setRowHeight(tableHeight);
@@ -385,7 +385,7 @@ public class ContainerManagement {
                     try{
                         JTable filmInformationTable = new JTable(tableBuilder.buildTableModel(filmInformationRs)){
                             public boolean isCellEditable(int row,int column){
-                                return false;
+                                return true;
                             }
                         };
                         filmInformationTable.setRowHeight(tableHeight);
