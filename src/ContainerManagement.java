@@ -435,15 +435,12 @@ public class ContainerManagement {
         pagesBox.addItem("Users");
         pagesBox.addItem("Profiles");
         pagesBox.addItem("Watched");
-        pagesBox.addItem("Library");
-        pagesBox.addItem("Movies");
-        pagesBox.addItem("Episodes");
-        pagesBox.addItem("Shows");
 
 
         pagesBox.setMaximumSize(new Dimension(8000,50));
         pagesBox.setBackground(Color.getHSBColor(167,0,10));
         createValues.setBackground(Color.WHITE);
+        createValues.setLayout(new GridLayout(14,1));
 
         JLabel UsersString = new JLabel("Add Users");
         createValues.add(UsersString);
@@ -455,8 +452,52 @@ public class ContainerManagement {
                 if(state == 1) {
                     if(itemEvent.getItem() == "Users") {
                         createValues.removeAll();
+
                         JLabel UsersString = new JLabel("Add Users");
+
+                        JLabel subscriberIdString = new JLabel("SubscriberId:");
+                        JTextArea subscriberId = new JTextArea(1,30);
+                        JScrollPane subscriberIdPane = new JScrollPane(subscriberId);
+
+                        JLabel nameString = new JLabel("Name:");
+                        JTextArea name = new JTextArea(1,30);
+                        JScrollPane namePane = new JScrollPane(name);
+
+                        JLabel streetString = new JLabel("Street:");
+                        JTextArea street = new JTextArea(1,30);
+                        JScrollPane streetPane = new JScrollPane(street);
+
+                        JLabel postalCodeString = new JLabel("Postalcode:");
+                        JTextArea postalCode = new JTextArea(1,30);
+                        JScrollPane postalCodePane = new JScrollPane(postalCode);
+
+                        JLabel houseNumberString = new JLabel("House Number:");
+                        JTextArea houseNumber = new JTextArea(1,30);
+                        JScrollPane houseNumberPane = new JScrollPane(houseNumber);
+
+                        JLabel cityString = new JLabel("City:");
+                        JTextArea city = new JTextArea(1,30);
+                        JScrollPane cityPane = new JScrollPane(city);
+
                         createValues.add(UsersString);
+
+                        createValues.add(subscriberIdString);
+                        createValues.add(subscriberIdPane);
+
+                        createValues.add(nameString);
+                        createValues.add(namePane);
+
+                        createValues.add(streetString);
+                        createValues.add(streetPane);
+
+                        createValues.add(postalCodeString);
+                        createValues.add(postalCodePane);
+
+                        createValues.add(houseNumberString);
+                        createValues.add(houseNumberPane);
+
+                        createValues.add(cityString);
+                        createValues.add(cityPane);
 
                         updateCreateValuesContainer(createValuesContainer);
                     } else if (itemEvent.getItem() == "Profiles") {
@@ -468,38 +509,11 @@ public class ContainerManagement {
 
                     } else if (itemEvent.getItem() == "Watched") {
                         createValues.removeAll();
-                        JLabel UsersString = new JLabel("Add Watched");
+                        JLabel UsersString = new JLabel("Add Watched shows/movies");
                         createValues.add(UsersString);
 
                         updateCreateValuesContainer(createValuesContainer);
 
-                    } else if (itemEvent.getItem() == "Library") {
-                        createValues.removeAll();
-                        JLabel UsersString = new JLabel("Add Library");
-                        createValues.add(UsersString);
-
-                        updateCreateValuesContainer(createValuesContainer);
-
-                    } else if (itemEvent.getItem() == "Movies") {
-                        createValues.removeAll();
-                        JLabel UsersString = new JLabel("Add Movies");
-                        createValues.add(UsersString);
-
-                        updateCreateValuesContainer(createValuesContainer);
-
-                    } else if (itemEvent.getItem() == "Episodes") {
-                        createValues.removeAll();
-                        JLabel UsersString = new JLabel("Add Episodes");
-                        createValues.add(UsersString);
-
-                        updateCreateValuesContainer(createValuesContainer);
-
-                    } else if (itemEvent.getItem() == "Shows") {
-                        createValues.removeAll();
-                        JLabel UsersString = new JLabel("Add Shows");
-                        createValues.add(UsersString);
-
-                        updateCreateValuesContainer(createValuesContainer);
                     }
                 }
             }
