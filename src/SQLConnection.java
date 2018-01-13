@@ -378,5 +378,23 @@ public class SQLConnection {
             JOptionPane.showMessageDialog(frame, "The inserted values where not correct.");
         }
     }
+
+    public void removeAccount(JFrame frame, Object accountId){
+        ResultSet rs = null;
+        Connection con = null;
+        Statement stmt = null;
+        try {
+            Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+            con = DriverManager.getConnection(connectionUrl);
+            String SQL = "DELETE FROM Users WHERE SubscriberId = "+accountId+"";
+            stmt = con.createStatement();
+            rs = stmt.executeQuery(SQL);
+
+            JOptionPane.showMessageDialog(frame, "The user has been successfully removed!");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }
 

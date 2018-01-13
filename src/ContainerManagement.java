@@ -67,17 +67,17 @@ public class ContainerManagement {
         Container accountContainer = new Container();
 
         JComboBox accountList = idGrabber.getAccountId();
-        JLabel accountsString = new JLabel("Select a account:");
+        JLabel accountsString = new JLabel("Select a user:");
 
         final JPopupMenu popup = new JPopupMenu();
-        popup.add(new JMenuItem(new AbstractAction("Option 1") {
+        popup.add(new JMenuItem(new AbstractAction("Edit User") {
             public void actionPerformed(ActionEvent e) {
                 JOptionPane.showMessageDialog(frame, "Option 1 selected");
             }
         }));
-        popup.add(new JMenuItem(new AbstractAction("Option 2") {
+        popup.add(new JMenuItem(new AbstractAction("Delete User") {
             public void actionPerformed(ActionEvent e) {
-                JOptionPane.showMessageDialog(frame, "Option 2 selected");
+                connection.removeAccount(frame, accountList.getSelectedItem());
             }
         }));
 
