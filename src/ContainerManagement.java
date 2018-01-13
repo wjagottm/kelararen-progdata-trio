@@ -77,7 +77,20 @@ public class ContainerManagement {
         }));
         popup.add(new JMenuItem(new AbstractAction("Delete User") {
             public void actionPerformed(ActionEvent e) {
-                connection.removeAccount(frame, accountList.getSelectedItem());
+                if(connection.removeAccount(frame, accountList.getSelectedItem())) {
+                    accountsContainer();
+                    Container newContainer = get("allAccounts");
+                    if (grabCurrentContainer() != null) {
+                        frame.getContentPane().remove(grabCurrentContainer());
+                    }
+                    frame.getContentPane().add(newContainer, BorderLayout.CENTER);
+
+                    placeCurrentContainer(newContainer);
+
+                    frame.invalidate();
+                    frame.validate();
+                    frame.repaint();
+                }
             }
         }));
 

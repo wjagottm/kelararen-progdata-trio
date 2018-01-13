@@ -379,22 +379,32 @@ public class SQLConnection {
         }
     }
 
-    public void removeAccount(JFrame frame, Object accountId){
+    public boolean removeAccount(JFrame frame, Object accountId){
         ResultSet rs = null;
         Connection con = null;
         Statement stmt = null;
+        Boolean result;
         try {
             Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
             con = DriverManager.getConnection(connectionUrl);
             String SQL = "DELETE FROM Users WHERE SubscriberId = "+accountId+"";
             stmt = con.createStatement();
-            rs = stmt.executeQuery(SQL);
+            stmt.executeUpdate(SQL);
 
             JOptionPane.showMessageDialog(frame, "The user has been successfully removed!");
-
+            result = true;
         } catch (Exception e) {
+            JOptionPane.showMessageDialog(frame, "The user could not be removed!");
             e.printStackTrace();
+            result = false;
+        } finally {
+            try {
+                stmt.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
+        return result;
     }
 }
 
