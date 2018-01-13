@@ -7,7 +7,7 @@ import javax.swing.plaf.FontUIResource;
 public class UserInterface implements Runnable {
 
     private JFrame frame;
-    private ContainerManagement containerManagement = new ContainerManagement();
+    private ContainerManagement containerManagement;
     private Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
     private int bigFontSize = (int) Math.round(screenSize.getHeight()) / 64;
     private int smallFontSize = (int) Math.round(screenSize.getHeight()) / 96;
@@ -15,7 +15,7 @@ public class UserInterface implements Runnable {
     @Override
     public void run() {
         frame = new JFrame("Netflix Statistix");
-
+        containerManagement = new ContainerManagement(frame);
         //Design settings
         frame.setPreferredSize(new Dimension((int) Math.round(screenSize.getWidth()) / 2, (int) Math.round(screenSize.getHeight()) / 2));
         setUIFont (new javax.swing.plaf.FontUIResource("Serif",Font.BOLD,bigFontSize));
@@ -43,7 +43,7 @@ public class UserInterface implements Runnable {
     }
 
     private void createComponents(Container container) {
-        containerManagement.accountsContainer(frame);
+        containerManagement.accountsContainer();
         containerManagement.singleProfileAccounts();
         containerManagement.getAllSeriesContainer();
         containerManagement.getAllFilmsContainer();
@@ -77,6 +77,7 @@ public class UserInterface implements Runnable {
             public void actionPerformed(ActionEvent e)
             {
                 Container testCurrentContainer = containerManagement.grabCurrentContainer();
+                containerManagement.accountsContainer();
                 Container newContainer = containerManagement.get("allAccounts");
                 if (testCurrentContainer != null) {
                     frame.getContentPane().remove(testCurrentContainer);
@@ -110,6 +111,7 @@ public class UserInterface implements Runnable {
             public void actionPerformed(ActionEvent e)
             {
                 Container testCurrentContainer = containerManagement.grabCurrentContainer();
+                containerManagement.getAllSeriesContainer();
                 Container newContainer = containerManagement.get("allSeries");
                 if (testCurrentContainer != null) {
                     frame.getContentPane().remove(testCurrentContainer);
@@ -126,6 +128,7 @@ public class UserInterface implements Runnable {
             public void actionPerformed(ActionEvent e)
             {
                 Container testCurrentContainer = containerManagement.grabCurrentContainer();
+                containerManagement.getAllFilmsContainer();
                 Container newContainer = containerManagement.get("allFilms");
                 if (testCurrentContainer != null) {
                     frame.getContentPane().remove(testCurrentContainer);
@@ -142,6 +145,7 @@ public class UserInterface implements Runnable {
             public void actionPerformed(ActionEvent e)
             {
                 Container testCurrentContainer = containerManagement.grabCurrentContainer();
+                containerManagement.createValuesContainer();
                 Container newContainer = containerManagement.get("creator");
                 if (testCurrentContainer != null) {
                     frame.getContentPane().remove(testCurrentContainer);

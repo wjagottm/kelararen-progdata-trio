@@ -1,3 +1,4 @@
+import javax.swing.*;
 import java.sql.*;
 import java.util.ArrayList;
 
@@ -356,6 +357,26 @@ public class SQLConnection {
             e.printStackTrace();
         }
         return rs;
+    }
+
+    public void createNewAccount(String subscriberId, String name, String street, String postalCode, String houseNumber, String city, JFrame frame) {
+        ResultSet rs = null;
+        Connection con = null;
+        Statement stmt = null;
+        try {
+            Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+            con = DriverManager.getConnection(connectionUrl);
+            String SQL = "INSERT INTO Users VALUES ("+ subscriberId +", '"+ name +"', '"+ street +"', '"+ postalCode +"', "+ houseNumber +", '"+ city +"')";
+            stmt = con.createStatement();
+            stmt.executeUpdate(SQL);
+
+
+            JOptionPane.showMessageDialog(frame, "Account added succesfully!");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(frame, "The inserted values where not correct.");
+        }
     }
 }
 

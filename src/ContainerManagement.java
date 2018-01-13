@@ -14,6 +14,7 @@ public class ContainerManagement {
     private SQLConnection connection = new SQLConnection();
     private idGrabber idGrabber = new idGrabber();
     private tableBuilder tableBuilder = new tableBuilder();
+    private JFrame frame = null;
 
     private Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
     private int tableHeight = (int) Math.round(screenSize.getHeight()) / 64;
@@ -36,9 +37,10 @@ public class ContainerManagement {
     //Variables for create tab
     private JPanel createValues = null;
 
-    public ContainerManagement() {
+    public ContainerManagement(JFrame frame) {
         this.containers = new HashMap<String, Container>();
         this.currentContainer = null;
+        this.frame = frame;
     }
 
     public void add(String key, Container container) {
@@ -61,10 +63,11 @@ public class ContainerManagement {
         return this.currentContainer;
     }
 
-    public void accountsContainer(JFrame frame) {
+    public void accountsContainer() {
         Container accountContainer = new Container();
 
         JComboBox accountList = idGrabber.getAccountId();
+        JLabel accountsString = new JLabel("Select a account:");
 
         final JPopupMenu popup = new JPopupMenu();
         popup.add(new JMenuItem(new AbstractAction("Option 1") {
@@ -92,7 +95,7 @@ public class ContainerManagement {
         accountList.setMaximumSize(new Dimension(8000,50));
         accountList.setBackground(Color.getHSBColor(167,0,10));
 
-
+        accountContainer.add(accountsString);
         accountContainer.add(accountList);
         accountContainer.add(button);
 
@@ -461,9 +464,7 @@ public class ContainerManagement {
         createValues.setBackground(Color.WHITE);
         createValues.setLayout(new GridLayout(14,1));
 
-        JLabel UsersString = new JLabel("Add Users");
-        createValues.add(UsersString);
-
+        createAccountsContainer();
 
         ItemListener itemListener = new ItemListener() {
             public void itemStateChanged(ItemEvent itemEvent) {
@@ -472,51 +473,7 @@ public class ContainerManagement {
                     if(itemEvent.getItem() == "Users") {
                         createValues.removeAll();
 
-                        JLabel UsersString = new JLabel("Add Users");
-
-                        JLabel subscriberIdString = new JLabel("SubscriberId:");
-                        JTextArea subscriberId = new JTextArea(1,30);
-                        JScrollPane subscriberIdPane = new JScrollPane(subscriberId);
-
-                        JLabel nameString = new JLabel("Name:");
-                        JTextArea name = new JTextArea(1,30);
-                        JScrollPane namePane = new JScrollPane(name);
-
-                        JLabel streetString = new JLabel("Street:");
-                        JTextArea street = new JTextArea(1,30);
-                        JScrollPane streetPane = new JScrollPane(street);
-
-                        JLabel postalCodeString = new JLabel("Postalcode:");
-                        JTextArea postalCode = new JTextArea(1,30);
-                        JScrollPane postalCodePane = new JScrollPane(postalCode);
-
-                        JLabel houseNumberString = new JLabel("House Number:");
-                        JTextArea houseNumber = new JTextArea(1,30);
-                        JScrollPane houseNumberPane = new JScrollPane(houseNumber);
-
-                        JLabel cityString = new JLabel("City:");
-                        JTextArea city = new JTextArea(1,30);
-                        JScrollPane cityPane = new JScrollPane(city);
-
-                        createValues.add(UsersString);
-
-                        createValues.add(subscriberIdString);
-                        createValues.add(subscriberIdPane);
-
-                        createValues.add(nameString);
-                        createValues.add(namePane);
-
-                        createValues.add(streetString);
-                        createValues.add(streetPane);
-
-                        createValues.add(postalCodeString);
-                        createValues.add(postalCodePane);
-
-                        createValues.add(houseNumberString);
-                        createValues.add(houseNumberPane);
-
-                        createValues.add(cityString);
-                        createValues.add(cityPane);
+                        createAccountsContainer();
 
                         updateCreateValuesContainer(createValuesContainer);
                     } else if (itemEvent.getItem() == "Profiles") {
@@ -553,5 +510,63 @@ public class ContainerManagement {
 
         container.revalidate();
         container.repaint();
+    }
+
+    public void createAccountsContainer() {
+        JLabel UsersString = new JLabel("Add Users");
+
+        JLabel subscriberIdString = new JLabel("SubscriberId:");
+        JTextArea subscriberId = new JTextArea(1,30);
+        JScrollPane subscriberIdPane = new JScrollPane(subscriberId);
+
+        JLabel nameString = new JLabel("Name:");
+        JTextArea name = new JTextArea(1,30);
+        JScrollPane namePane = new JScrollPane(name);
+
+        JLabel streetString = new JLabel("Street:");
+        JTextArea street = new JTextArea(1,30);
+        JScrollPane streetPane = new JScrollPane(street);
+
+        JLabel postalCodeString = new JLabel("Postalcode:");
+        JTextArea postalCode = new JTextArea(1,30);
+        JScrollPane postalCodePane = new JScrollPane(postalCode);
+
+        JLabel houseNumberString = new JLabel("House Number:");
+        JTextArea houseNumber = new JTextArea(1,30);
+        JScrollPane houseNumberPane = new JScrollPane(houseNumber);
+
+        JLabel cityString = new JLabel("City:");
+        JTextArea city = new JTextArea(1,30);
+        JScrollPane cityPane = new JScrollPane(city);
+
+        JButton addAccount = new JButton("Add Account");
+
+        createValues.add(UsersString);
+
+        createValues.add(subscriberIdString);
+        createValues.add(subscriberIdPane);
+
+        createValues.add(nameString);
+        createValues.add(namePane);
+
+        createValues.add(streetString);
+        createValues.add(streetPane);
+
+        createValues.add(postalCodeString);
+        createValues.add(postalCodePane);
+
+        createValues.add(houseNumberString);
+        createValues.add(houseNumberPane);
+
+        createValues.add(cityString);
+        createValues.add(cityPane);
+
+        addAccount.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                connection.createNewAccount(subscriberId.getText(), name.getText(), street.getText(), postalCode.getText(), houseNumber.getText(), city.getText(), frame);
+            }
+        });
+        createValues.add(addAccount);
     }
 }
