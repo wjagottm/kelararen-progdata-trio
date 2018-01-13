@@ -474,6 +474,34 @@ public class SQLConnection {
         return result;
     }
 
+    public boolean editAccount(JFrame frame, int subId, String Name, String Street, String PostalCode, String HouseNumber, String City){
+        ResultSet rs = null;
+        Connection con = null;
+        Statement stmt = null;
+        Boolean result;
+        try {
+            Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+            con = DriverManager.getConnection(connectionUrl);
+            String SQL = "UPDATE Users SET Name = '"+Name+"', Street = '"+Street+"', PostalCode = '"+PostalCode+"', HouseNumber = '"+HouseNumber+"', City = '"+City+"' WHERE SubscriberId = "+subId;
+            stmt = con.createStatement();
+            stmt.executeUpdate(SQL);
+
+            JOptionPane.showMessageDialog(frame, "The user has been successfully Edited!");
+            result = true;
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(frame, "The user could not be edited!");
+            e.printStackTrace();
+            result = false;
+        } finally {
+            try {
+                stmt.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return result;
+    }
+
     public boolean removeProfile(JFrame frame, Object subscriberId, Object profileName){
         ResultSet rs = null;
         Connection con = null;

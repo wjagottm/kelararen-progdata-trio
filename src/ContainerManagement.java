@@ -93,9 +93,12 @@ public class ContainerManagement {
                 JTextField textHouseNumber = new JTextField();
                 JTextField textCity = new JTextField();
 
+                int accountId = 0;
+
                 try {
                     ResultSet rs = connection.getAccountInformation(accountList.getSelectedItem());
                     while (rs.next()) {
+                        accountId = Integer.parseInt(rs.getString("SubscriberId"));
                         textName.setText(rs.getString("Name"));
                         textStreet.setText(rs.getString("Street"));
                         textPostalCode.setText(rs.getString("PostalCode"));
@@ -119,12 +122,25 @@ public class ContainerManagement {
 
                 panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 
-                Object[] options = {"Edit",
-                        "Cancel"};
+                Object[] options = {"Edit", "Cancel"};
 
+                int n = JOptionPane.showOptionDialog(frame, panel, "Edit User",JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
+                if (n == JOptionPane.YES_OPTION) {
+                    if(connection.editAccount(frame, accountId, textName.getText(), textStreet.getText(), textPostalCode.getText(), textHouseNumber.getText(), textCity.getText())) {
+                        accountsContainer();
+                        Container newContainer = get("allAccounts");
+                        if (grabCurrentContainer() != null) {
+                            frame.getContentPane().remove(grabCurrentContainer());
+                        }
+                        frame.getContentPane().add(newContainer, BorderLayout.CENTER);
 
+                        placeCurrentContainer(newContainer);
 
-                JOptionPane.showOptionDialog(frame, panel, "Edit User",JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
+                        frame.invalidate();
+                        frame.validate();
+                        frame.repaint();
+                    }
+                }
             }
         }));
         popup.add(new JMenuItem(new AbstractAction("Delete User") {
