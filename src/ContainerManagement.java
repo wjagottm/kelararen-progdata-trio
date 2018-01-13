@@ -72,7 +72,51 @@ public class ContainerManagement {
         final JPopupMenu popup = new JPopupMenu();
         popup.add(new JMenuItem(new AbstractAction("Edit User") {
             public void actionPerformed(ActionEvent e) {
-                JOptionPane.showMessageDialog(frame, "Option 1 selected");
+                JPanel panel = new JPanel();
+                JLabel labelName = new JLabel("Name ");
+                JLabel labelStreet = new JLabel("Street");
+                JLabel labelPostalCode = new JLabel("Postal Code");
+                JLabel labelHouseNumber = new JLabel("House Number");
+                JLabel labelCity = new JLabel("City");
+
+                JTextField textName = new JTextField();
+                JTextField textStreet = new JTextField();
+                JTextField textPostalCode = new JTextField();
+                JTextField textHouseNumber = new JTextField();
+                JTextField textCity = new JTextField();
+
+                try {
+                    ResultSet rs = connection.getAccountInformation(accountList.getSelectedItem());
+                    while (rs.next()) {
+                        textName.setText(rs.getString("Name"));
+                        textStreet.setText(rs.getString("Street"));
+                        textPostalCode.setText(rs.getString("PostalCode"));
+                        textHouseNumber.setText(rs.getString("HouseNumber"));
+                        textCity.setText(rs.getString("City"));
+                    }
+                } catch (Exception a) {
+                    a.printStackTrace();
+                }
+
+                panel.add(labelName);
+                panel.add(textName);
+                panel.add(labelStreet);
+                panel.add(textStreet);
+                panel.add(labelPostalCode);
+                panel.add(textPostalCode);
+                panel.add(labelHouseNumber);
+                panel.add(textHouseNumber);
+                panel.add(labelCity);
+                panel.add(textCity);
+
+                panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+
+                Object[] options = {"Edit",
+                        "Cancel"};
+
+
+
+                JOptionPane.showOptionDialog(frame, panel, "Edit User",JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
             }
         }));
         popup.add(new JMenuItem(new AbstractAction("Delete User") {
