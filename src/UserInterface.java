@@ -43,7 +43,7 @@ public class UserInterface implements Runnable {
     }
 
     private void createComponents(Container container) {
-        containerManagement.accountsContainer();
+        containerManagement.accountsContainer(frame);
         containerManagement.singleProfileAccounts();
         containerManagement.getAllSeriesContainer();
         containerManagement.getAllFilmsContainer();

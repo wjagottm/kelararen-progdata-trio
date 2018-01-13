@@ -2,10 +2,9 @@ import com.sun.deploy.panel.JavaPanel;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.*;
 import java.sql.ResultSet;
 import java.util.HashMap;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 
 public class ContainerManagement {
 
@@ -62,10 +61,29 @@ public class ContainerManagement {
         return this.currentContainer;
     }
 
-    public void accountsContainer() {
+    public void accountsContainer(JFrame frame) {
         Container accountContainer = new Container();
 
         JComboBox accountList = idGrabber.getAccountId();
+
+        final JPopupMenu popup = new JPopupMenu();
+        popup.add(new JMenuItem(new AbstractAction("Option 1") {
+            public void actionPerformed(ActionEvent e) {
+                JOptionPane.showMessageDialog(frame, "Option 1 selected");
+            }
+        }));
+        popup.add(new JMenuItem(new AbstractAction("Option 2") {
+            public void actionPerformed(ActionEvent e) {
+                JOptionPane.showMessageDialog(frame, "Option 2 selected");
+            }
+        }));
+
+        final JButton button = new JButton("Options");
+        button.addMouseListener(new MouseAdapter() {
+            public void mousePressed(MouseEvent e) {
+                popup.show(e.getComponent(), e.getX(), e.getY());
+            }
+        });
 
         //Design settings
         accountContainer.setLayout(new BoxLayout(accountContainer, BoxLayout.Y_AXIS));
@@ -76,6 +94,7 @@ public class ContainerManagement {
 
 
         accountContainer.add(accountList);
+        accountContainer.add(button);
 
         ResultSet accountInformationRs = connection.getFirstAccountInformation();
         ResultSet accountWatchedFilmsRs = connection.getFilmsWatchedByAccount(connection.getFirstAccountId());
