@@ -13,6 +13,7 @@ public class idGrabber {
         return accountIdBox;
     }
 
+
     public JComboBox getAllFilmTitles() {
         ArrayList<String> films = connection.getAllFilmTitles();
         JComboBox filmTitleBox = new JComboBox();
@@ -32,12 +33,21 @@ public class idGrabber {
     }
 
     public JComboBox getAllProfileNames() {
-        ArrayList<String> accounts = connection.getAllAccountNames();
+        ArrayList<String> accounts = connection.getAllProfileNames();
         JComboBox accountNameBox = new JComboBox();
         for (String accountName : accounts) {
             accountNameBox.addItem(accountName);
         }
         return accountNameBox;
+    }
+
+    public JComboBox getAllProfileNames(Object subscriberId) {
+        ArrayList<String> accounts = connection.getAllProfileNames(subscriberId);
+        JComboBox profileNameBox = new JComboBox();
+        for (String accountName : accounts) {
+            profileNameBox.addItem(accountName);
+        }
+        return profileNameBox;
     }
 
 }

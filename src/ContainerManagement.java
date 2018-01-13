@@ -1,9 +1,11 @@
-import com.sun.deploy.panel.JavaPanel;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.sql.ResultSet;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 
 public class ContainerManagement {
@@ -25,6 +27,12 @@ public class ContainerManagement {
     private JScrollPane tablePane1 = null;
     private JScrollPane tablePane2 = null;
     private JLabel watchedFilms = new JLabel("Watched Movies:");
+
+    //Variables for profiles tab
+    private JComboBox profileList = null;
+    private JButton deleteProfileButton = null;
+    private JScrollPane profileInformationPane = null;
+    private ItemListener profileListener = null;
 
     //Variables for film tab
     private JScrollPane filmTablePane1 = null;
@@ -258,6 +266,153 @@ public class ContainerManagement {
         add("allAccounts", accountContainer);
     }
 
+    public void allProfilesContainer() {
+        Container profilesContainer = new Container();
+
+
+        JComboBox accountList = idGrabber.getAccountId();
+        JLabel accountsString = new JLabel("Select a subcriberId:");
+
+        profileList = idGrabber.getAllProfileNames(accountList.getSelectedItem());
+        JLabel profilesString = new JLabel("Select a profile:");
+
+        profilesContainer.setLayout(new BoxLayout(profilesContainer, BoxLayout.Y_AXIS));
+        profileList.setMaximumSize(new Dimension(8000,50));
+        profileList.setBackground(Color.getHSBColor(167,0,10));
+        accountList.setMaximumSize(new Dimension(8000,50));
+        accountList.setBackground(Color.getHSBColor(167,0,10));
+
+        final JPopupMenu popup = new JPopupMenu();
+        popup.add(new JMenuItem(new AbstractAction("Edit User") {
+            public void actionPerformed(ActionEvent e) {
+                JOptionPane.showMessageDialog(frame, "Option 1 selected");
+            }
+        }));
+        popup.add(new JMenuItem(new AbstractAction("Delete User") {
+            public void actionPerformed(ActionEvent e) {
+                if(connection.removeProfile(frame, accountList.getSelectedItem(), profileList.getSelectedItem())) {
+                    accountsContainer();
+                    Container newContainer = get("allProfiles");
+                    if (grabCurrentContainer() != null) {
+                        frame.getContentPane().remove(grabCurrentContainer());
+                    }
+                    frame.getContentPane().add(newContainer, BorderLayout.CENTER);
+
+                    placeCurrentContainer(newContainer);
+
+                    frame.invalidate();
+                    frame.validate();
+                    frame.repaint();
+                }
+            }
+        }));
+
+        deleteProfileButton = new JButton("Options");
+        deleteProfileButton.addMouseListener(new MouseAdapter() {
+            public void mousePressed(MouseEvent e) {
+                popup.show(e.getComponent(), e.getX(), e.getY());
+            }
+        });
+
+        ItemListener accountListener = new ItemListener() {
+            public void itemStateChanged(ItemEvent itemEvent) {
+                int state = itemEvent.getStateChange();
+                if (state == 1) {
+                    profilesContainer.remove(profileList);
+                    profilesContainer.remove(deleteProfileButton);
+                    profilesContainer.remove(profileInformationPane);
+                    profileList = idGrabber.getAllProfileNames(itemEvent.getItem());
+
+                    profileList.setMaximumSize(new Dimension(8000,50));
+                    profileList.setBackground(Color.getHSBColor(167,0,10));
+
+                    ResultSet profileInformationRs = connection.getProfileInformation(itemEvent.getItem(), profileList.getSelectedItem());
+                    try {
+                        JTable profileInformationTable = new JTable(tableBuilder.buildTableModel(profileInformationRs)){
+                            public boolean isCellEditable(int row,int column){
+                                return false;
+                            }
+                        };
+
+                        profileInformationTable.setRowHeight(tableHeight);
+
+                        profileInformationPane = new JScrollPane(profileInformationTable);
+
+
+                        profileList.addItemListener(profileListener);
+
+                        profilesContainer.add(profileList);
+                        profilesContainer.add(deleteProfileButton);
+                        profilesContainer.add(profileInformationPane);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+                    profilesContainer.revalidate();
+                    profilesContainer.repaint();
+                }
+            }
+        };
+
+        profileListener = new ItemListener() {
+            public void itemStateChanged(ItemEvent itemEvent) {
+                int state = itemEvent.getStateChange();
+                if (state == 1) {
+                    profilesContainer.remove(profileInformationPane);
+
+                    ResultSet profileInformationRs = connection.getProfileInformation(accountList.getSelectedItem(), itemEvent.getItem());
+                    try {
+                        JTable profileInformationTable = new JTable(tableBuilder.buildTableModel(profileInformationRs)){
+                            public boolean isCellEditable(int row,int column){
+                                return false;
+                            }
+                        };
+
+                        profileInformationTable.setRowHeight(tableHeight);
+
+                        profileInformationPane = new JScrollPane(profileInformationTable);
+
+                        profilesContainer.add(profileInformationPane);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+                    profilesContainer.revalidate();
+                    profilesContainer.repaint();
+                }
+            }
+        };
+
+        accountList.addItemListener(accountListener);
+        profileList.addItemListener(profileListener);
+
+        profilesContainer.add(accountsString);
+        profilesContainer.add(accountList);
+        profilesContainer.add(profilesString);
+
+        ResultSet profileInformationRs = connection.getProfileInformation(accountList.getSelectedItem(), profileList.getSelectedItem());
+        try {
+            JTable profileInformationTable = new JTable(tableBuilder.buildTableModel(profileInformationRs)){
+                public boolean isCellEditable(int row,int column){
+                    return false;
+                }
+            };
+
+            profileInformationTable.setRowHeight(tableHeight);
+
+            profileInformationPane = new JScrollPane(profileInformationTable);
+
+
+            profilesContainer.add(profileList);
+            profilesContainer.add(deleteProfileButton);
+            profilesContainer.add(profileInformationPane);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        add("allProfiles", profilesContainer);
+    }
+
     public void singleProfileAccounts() {
         Container singleProfileAccounts = new Container();
         JLabel singleProfileAccountString = new JLabel("Single profile Accounts: ");
@@ -278,7 +433,7 @@ public class ContainerManagement {
             } else {
                 JTable singleProfileAccountsTable = new JTable(tableBuilder.buildTableModel(singleProfileAccountRs)){
                     public boolean isCellEditable(int row,int column){
-                        return true;
+                        return false;
                     }
                 };
 
@@ -344,7 +499,7 @@ public class ContainerManagement {
         try {
             JTable serieInformationTable = new JTable(tableBuilder.buildTableModel(serieInformation)){
                 public boolean isCellEditable(int row,int column){
-                    return true;
+                    return false;
                 }
             };
             serieInformationTable.setRowHeight(tableHeight);
@@ -364,7 +519,7 @@ public class ContainerManagement {
 
                 JTable serieInformationTable = new JTable(tableBuilder.buildTableModel(serieInformation)){
                     public boolean isCellEditable(int row,int column){
-                        return true;
+                        return false;
                     }
                 };
                 serieInformationTable.setRowHeight(tableHeight);
@@ -377,7 +532,7 @@ public class ContainerManagement {
             } else {
                 JTable serieInformationTable = new JTable(tableBuilder.buildTableModel(serieInformation)){
                     public boolean isCellEditable(int row,int column){
-                        return true;
+                        return false;
                     }
                 };
                 serieInformationTable.setRowHeight(tableHeight);
@@ -402,7 +557,7 @@ public class ContainerManagement {
         try {
             JTable longestFilmDurationUnderAgeSixteenTable = new JTable(tableBuilder.buildTableModel(longestFilmDurationUnderAgeSixteen)){
                 public boolean isCellEditable(int row,int column){
-                    return true;
+                    return false;
                 }
             };
             longestFilmDurationUnderAgeSixteenTable.setRowHeight(tableHeight);
@@ -435,7 +590,7 @@ public class ContainerManagement {
         try {
             JTable filmTable = new JTable(tableBuilder.buildTableModel(firstFilmInformationRs)){
                 public boolean isCellEditable(int row,int column){
-                    return true;
+                    return false;
                 }
             };
             filmTable.setRowHeight(tableHeight);
@@ -469,7 +624,7 @@ public class ContainerManagement {
                     try{
                         JTable filmInformationTable = new JTable(tableBuilder.buildTableModel(filmInformationRs)){
                             public boolean isCellEditable(int row,int column){
-                                return true;
+                                return false;
                             }
                         };
                         filmInformationTable.setRowHeight(tableHeight);
@@ -535,8 +690,52 @@ public class ContainerManagement {
                         updateCreateValuesContainer(createValuesContainer);
                     } else if (itemEvent.getItem() == "Profiles") {
                         createValues.removeAll();
-                        JLabel UsersString = new JLabel("Add Profiles");
+                        JLabel UsersString = new JLabel("Fill the values below: ");
+
+                        JComboBox accountList = idGrabber.getAccountId();
+                        JLabel accountsString = new JLabel("Select a subscriber ID:");
+
+                        JLabel profileNameString = new JLabel("Profile name:");
+                        JTextArea profileName = new JTextArea(1,30);
+                        JScrollPane profileNamePane = new JScrollPane(profileName);
+
+
+                        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+                        Date date = new Date();
+
+                        JLabel dateOfBirthString = new JLabel("Date of Birth:");
+                        JLabel exampleText = new JLabel("For example: " + dateFormat.format(date));
+                        JTextArea dateOfBirth = new JTextArea(1,30);
+                        JScrollPane dateOfBirthPane = new JScrollPane(dateOfBirth);
+
+                        accountList.setMaximumSize(new Dimension(8000,50));
+                        accountList.setBackground(Color.getHSBColor(167,0,10));
+                        exampleText.setFont(new Font("Serif", Font.PLAIN, smallFontSize));
+
+                        JButton addProfile = new JButton("Add new profile");
+
+                        addProfile.addActionListener(new ActionListener() {
+                            @Override
+                            public void actionPerformed(ActionEvent e) {
+                                connection.createNewProfile(String.valueOf(accountList.getSelectedItem()), profileName.getText(), dateOfBirth.getText(), frame);
+                                profileName.setText("");
+                                dateOfBirth.setText("");
+                            }
+                        });
+
                         createValues.add(UsersString);
+
+                        createValues.add(accountsString);
+                        createValues.add(accountList);
+
+                        createValues.add(profileNameString);
+                        createValues.add(profileNamePane);
+
+                        createValues.add(dateOfBirthString);
+                        createValues.add(exampleText);
+                        createValues.add(dateOfBirthPane);
+
+                        createValues.add(addProfile);
 
                         updateCreateValuesContainer(createValuesContainer);
 
@@ -570,7 +769,7 @@ public class ContainerManagement {
     }
 
     public void createAccountsContainer() {
-        JLabel UsersString = new JLabel("Add Users");
+        JLabel UsersString = new JLabel("Fill the values below: ");
 
         JLabel subscriberIdString = new JLabel("SubscriberId:");
         JTextArea subscriberId = new JTextArea(1,30);
@@ -622,8 +821,15 @@ public class ContainerManagement {
             @Override
             public void actionPerformed(ActionEvent e) {
                 connection.createNewAccount(subscriberId.getText(), name.getText(), street.getText(), postalCode.getText(), houseNumber.getText(), city.getText(), frame);
+                subscriberId.setText("");
+                name.setText("");
+                street.setText("");
+                postalCode.setText("");
+                houseNumber.setText("");
+                city.setText("");
             }
         });
         createValues.add(addAccount);
     }
 }
+

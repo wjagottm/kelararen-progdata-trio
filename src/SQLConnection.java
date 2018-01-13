@@ -162,12 +162,42 @@ public class SQLConnection {
         return films;
     }
 
-    public ArrayList<String> getAllAccountNames() {
+    public ArrayList<String> getAllProfileNames() {
         ArrayList<String> accounts = new ArrayList<>();
         try {
             Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
             con = DriverManager.getConnection(connectionUrl);
             String SQL = "SELECT * FROM Profiles";
+            stmt = con.createStatement();
+            rs = stmt.executeQuery(SQL);
+            while (rs.next()) {
+                accounts.add(rs.getString("ProfileName"));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (rs != null) try {
+                rs.close();
+            } catch (Exception e) {
+            }
+            if (stmt != null) try {
+                stmt.close();
+            } catch (Exception e) {
+            }
+            if (con != null) try {
+                con.close();
+            } catch (Exception e) {
+            }
+        }
+        return accounts;
+    }
+
+    public ArrayList<String> getAllProfileNames(Object subscriberId) {
+        ArrayList<String> accounts = new ArrayList<>();
+        try {
+            Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+            con = DriverManager.getConnection(connectionUrl);
+            String SQL = "SELECT * FROM Profiles WHERE subscriberId = " + String.valueOf(subscriberId);
             stmt = con.createStatement();
             rs = stmt.executeQuery(SQL);
             while (rs.next()) {
@@ -230,6 +260,23 @@ public class SQLConnection {
             Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
             con = DriverManager.getConnection(connectionUrl);
             String SQL = "SELECT TOP 1 * FROM Movies";
+            stmt = con.createStatement();
+            rs = stmt.executeQuery(SQL);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return rs;
+    }
+
+    public ResultSet getProfileInformation(Object subscriberId, Object profile) {
+        ResultSet rs = null;
+        Connection con = null;
+        Statement stmt = null;
+        try {
+            Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+            con = DriverManager.getConnection(connectionUrl);
+            String SQL = "SELECT * FROM Profiles WHERE SubscriberId = " + subscriberId + " AND ProfileName = '" + profile + "'";
             stmt = con.createStatement();
             rs = stmt.executeQuery(SQL);
 
@@ -379,6 +426,26 @@ public class SQLConnection {
         }
     }
 
+    public void createNewProfile(String subscriberId, String profileName, String dateOfBirth, JFrame frame) {
+        ResultSet rs = null;
+        Connection con = null;
+        Statement stmt = null;
+        try {
+            Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+            con = DriverManager.getConnection(connectionUrl);
+            String SQL = "INSERT INTO Profiles VALUES ("+ subscriberId +", '"+ profileName +"', '"+ dateOfBirth +"')";
+            stmt = con.createStatement();
+            stmt.executeUpdate(SQL);
+
+
+            JOptionPane.showMessageDialog(frame, "Profile added succesfully!");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(frame, "The inserted values where not correct.");
+        }
+    }
+
     public boolean removeAccount(JFrame frame, Object accountId){
         ResultSet rs = null;
         Connection con = null;
@@ -387,7 +454,7 @@ public class SQLConnection {
         try {
             Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
             con = DriverManager.getConnection(connectionUrl);
-            String SQL = "DELETE FROM Users WHERE SubscriberId = "+accountId+"";
+            String SQL = "DELETE FROM Users WHERE SubscriberId = " + accountId;
             stmt = con.createStatement();
             stmt.executeUpdate(SQL);
 
@@ -395,6 +462,34 @@ public class SQLConnection {
             result = true;
         } catch (Exception e) {
             JOptionPane.showMessageDialog(frame, "The user could not be removed!");
+            e.printStackTrace();
+            result = false;
+        } finally {
+            try {
+                stmt.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return result;
+    }
+
+    public boolean removeProfile(JFrame frame, Object subscriberId, Object profileName){
+        ResultSet rs = null;
+        Connection con = null;
+        Statement stmt = null;
+        Boolean result;
+        try {
+            Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+            con = DriverManager.getConnection(connectionUrl);
+            String SQL = "DELETE FROM Profiles WHERE SubcriberId = " + subscriberId + " AND ProfileName = " + profileName;
+            stmt = con.createStatement();
+            stmt.executeUpdate(SQL);
+
+            JOptionPane.showMessageDialog(frame, "The profile has been successfully removed!");
+            result = true;
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(frame, "The profile could not be removed!");
             e.printStackTrace();
             result = false;
         } finally {

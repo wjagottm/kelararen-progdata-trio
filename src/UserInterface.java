@@ -44,6 +44,7 @@ public class UserInterface implements Runnable {
 
     private void createComponents(Container container) {
         containerManagement.accountsContainer();
+        containerManagement.allProfilesContainer();
         containerManagement.singleProfileAccounts();
         containerManagement.getAllSeriesContainer();
         containerManagement.getAllFilmsContainer();
@@ -66,6 +67,7 @@ public class UserInterface implements Runnable {
 
         //Left buttons creation
         JButton accounts = new JButton("Accounts");
+        JButton profiles = new JButton("Profiles");
         JButton accountWithOneProfile = new JButton("Accounts with 1 profile");
         JButton series = new JButton("Users average view time per show");
         JButton films = new JButton("Movies");
@@ -79,6 +81,23 @@ public class UserInterface implements Runnable {
                 Container testCurrentContainer = containerManagement.grabCurrentContainer();
                 containerManagement.accountsContainer();
                 Container newContainer = containerManagement.get("allAccounts");
+                if (testCurrentContainer != null) {
+                    frame.getContentPane().remove(testCurrentContainer);
+                }
+                frame.getContentPane().add(newContainer, BorderLayout.CENTER);
+
+                addNewContainer(newContainer);
+            }
+        });
+
+        //profiles button action listener
+        profiles.addActionListener(new ActionListener()
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+                Container testCurrentContainer = containerManagement.grabCurrentContainer();
+                containerManagement.allProfilesContainer();
+                Container newContainer = containerManagement.get("allProfiles");
                 if (testCurrentContainer != null) {
                     frame.getContentPane().remove(testCurrentContainer);
                 }
@@ -158,10 +177,11 @@ public class UserInterface implements Runnable {
 
         //Add left buttons to JPanel inside 1
         leftPanelInside1.add(accounts);
+        leftPanelInside1.add(profiles);
         leftPanelInside1.add(accountWithOneProfile);
 
         //Add left buttons to JPanel inside 2
-        leftPanelInside1.add(series);
+        leftPanelInside2.add(series);
         leftPanelInside2.add(films);
 
         //Add left buttons to JPanel inside 3
