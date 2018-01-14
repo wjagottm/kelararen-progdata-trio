@@ -50,6 +50,7 @@ public class UserInterface implements Runnable {
         containerManagement.singleProfileAccounts();
         containerManagement.getAllSeriesContainer();
         containerManagement.getAllFilmsContainer();
+        containerManagement.editWatchedValuesContainer();
         containerManagement.createValuesContainer();
 
         container.add(createLeftButtons(), BorderLayout.WEST);
@@ -73,6 +74,7 @@ public class UserInterface implements Runnable {
         JButton accountWithOneProfile = new JButton("Accounts with 1 profile");
         JButton series = new JButton("Users average view time per show");
         JButton films = new JButton("Movies");
+        JButton editWatched = new JButton("Edit watched values");
         JButton create = new JButton("Add database values");
 
         //Add Action event listeners
@@ -160,7 +162,7 @@ public class UserInterface implements Runnable {
             }
         });
 
-        //filmsButton Actionlistener
+        //createButton Actionlistener
         create.addActionListener(new ActionListener()
         {
             public void actionPerformed(ActionEvent e)
@@ -168,6 +170,23 @@ public class UserInterface implements Runnable {
                 Container testCurrentContainer = containerManagement.grabCurrentContainer();
                 containerManagement.createValuesContainer();
                 Container newContainer = containerManagement.get("creator");
+                if (testCurrentContainer != null) {
+                    frame.getContentPane().remove(testCurrentContainer);
+                }
+                frame.getContentPane().add(newContainer, BorderLayout.CENTER);
+
+                addNewContainer(newContainer);
+            }
+        });
+
+        //editWatchedButton actionListener
+        editWatched.addActionListener(new ActionListener()
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+                Container testCurrentContainer = containerManagement.grabCurrentContainer();
+                containerManagement.editWatchedValuesContainer();
+                Container newContainer = containerManagement.get("editWatched");
                 if (testCurrentContainer != null) {
                     frame.getContentPane().remove(testCurrentContainer);
                 }

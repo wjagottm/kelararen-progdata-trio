@@ -138,18 +138,7 @@ public class ContainerManagement {
                 int n = JOptionPane.showOptionDialog(frame, panel, "Edit User",JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
                 if (n == JOptionPane.YES_OPTION) {
                     if(connection.editAccount(frame, accountId, textName.getText(), textStreet.getText(), textPostalCode.getText(), textHouseNumber.getText(), textCity.getText())) {
-                        accountsContainer();
-                        Container newContainer = get("allAccounts");
-                        if (grabCurrentContainer() != null) {
-                            frame.getContentPane().remove(grabCurrentContainer());
-                        }
-                        frame.getContentPane().add(newContainer, BorderLayout.CENTER);
-
-                        placeCurrentContainer(newContainer);
-
-                        frame.invalidate();
-                        frame.validate();
-                        frame.repaint();
+                        refreshAccountsContainer();
                     }
                 }
             }
@@ -157,21 +146,12 @@ public class ContainerManagement {
         popup.add(new JMenuItem(new AbstractAction("Delete User") {
             public void actionPerformed(ActionEvent e) {
                 if(connection.removeAccount(frame, accountList.getSelectedItem())) {
-                    accountsContainer();
-                    Container newContainer = get("allAccounts");
-                    if (grabCurrentContainer() != null) {
-                        frame.getContentPane().remove(grabCurrentContainer());
-                    }
-                    frame.getContentPane().add(newContainer, BorderLayout.CENTER);
-
-                    placeCurrentContainer(newContainer);
-
-                    frame.invalidate();
-                    frame.validate();
-                    frame.repaint();
+                    refreshAccountsContainer();
                 }
             }
         }));
+
+
 
         final JButton button = new JButton("Options");
         button.addMouseListener(new MouseAdapter() {
@@ -291,6 +271,21 @@ public class ContainerManagement {
         accountList.addItemListener(itemListener);
 
         add("allAccounts", accountContainer);
+    }
+
+    public void refreshAccountsContainer() {
+        accountsContainer();
+        Container newContainer = get("allAccounts");
+        if (grabCurrentContainer() != null) {
+            frame.getContentPane().remove(grabCurrentContainer());
+        }
+        frame.getContentPane().add(newContainer, BorderLayout.CENTER);
+
+        placeCurrentContainer(newContainer);
+
+        frame.invalidate();
+        frame.validate();
+        frame.repaint();
     }
 
     public void allProfilesContainer() {
@@ -984,6 +979,14 @@ public class ContainerManagement {
         createValuesContainer.add(createValues);
 
         add("creator", createValuesContainer);
+    }
+
+    public void editWatchedValuesContainer() {
+        Container editWatchedValuesContainer = new Container();
+
+        editWatchedValuesContainer.setLayout(new BoxLayout(editWatchedValuesContainer, BoxLayout.Y_AXIS));
+
+        add("editWatched", editWatchedValuesContainer);
     }
 
     private void createMovieShowInformationPane(JComboBox movieList, JLabel movieString, ResultSet movieRs) {
