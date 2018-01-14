@@ -339,18 +339,7 @@ public class ContainerManagement {
             int n = JOptionPane.showOptionDialog(frame, panel, "Edit Profile",JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
                 if (n == JOptionPane.YES_OPTION) {
                     if(connection.editProfile(frame, subId, textProfileName.getText(), textDate.getText())) {
-                        accountsContainer();
-                        Container newContainer = get("allProfiles");
-                        if (grabCurrentContainer() != null) {
-                            frame.getContentPane().remove(grabCurrentContainer());
-                        }
-                        frame.getContentPane().add(newContainer, BorderLayout.CENTER);
-
-                        placeCurrentContainer(newContainer);
-
-                        frame.invalidate();
-                        frame.validate();
-                        frame.repaint();
+                        refreshProfileContainer();
                     }
                 }
             }
@@ -358,18 +347,7 @@ public class ContainerManagement {
         popup.add(new JMenuItem(new AbstractAction("Delete User") {
             public void actionPerformed(ActionEvent e) {
                 if(connection.removeProfile(frame, accountList.getSelectedItem(), profileList.getSelectedItem())) {
-                    allProfilesContainer();
-                    Container newContainer = get("allProfiles");
-                    if (grabCurrentContainer() != null) {
-                        frame.getContentPane().remove(grabCurrentContainer());
-                    }
-                    frame.getContentPane().add(newContainer, BorderLayout.CENTER);
-
-                    placeCurrentContainer(newContainer);
-
-                    frame.invalidate();
-                    frame.validate();
-                    frame.repaint();
+                    refreshProfileContainer();
                 }
             }
         }));
@@ -478,6 +456,21 @@ public class ContainerManagement {
         }
 
         add("allProfiles", profilesContainer);
+    }
+
+    public void refreshProfileContainer() {
+        allProfilesContainer();
+        Container newContainer = get("allProfiles");
+        if (grabCurrentContainer() != null) {
+            frame.getContentPane().remove(grabCurrentContainer());
+        }
+        frame.getContentPane().add(newContainer, BorderLayout.CENTER);
+
+        placeCurrentContainer(newContainer);
+
+        frame.invalidate();
+        frame.validate();
+        frame.repaint();
     }
 
     public void singleProfileAccounts() {
