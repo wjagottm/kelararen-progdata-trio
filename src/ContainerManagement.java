@@ -310,9 +310,54 @@ public class ContainerManagement {
         accountList.setBackground(Color.getHSBColor(167,0,10));
 
         final JPopupMenu popup = new JPopupMenu();
-        popup.add(new JMenuItem(new AbstractAction("Edit User") {
-            public void actionPerformed(ActionEvent e) {
-                JOptionPane.showMessageDialog(frame, "Option 1 selected");
+        popup.add(new JMenuItem(new AbstractAction("Edit Profile") {
+            public void actionPerformed(ActionEvent e){
+            JPanel panel = new JPanel();
+            JLabel labelProfileName = new JLabel("Profile Name");
+            JLabel labelDate = new JLabel("Date of Birth");
+
+            JTextField textProfileName = new JTextField();
+            JTextField textDate = new JTextField();
+
+            int subId = 0;
+
+            try {
+                ResultSet rs = connection.getProfileInformation(accountList.getSelectedItem(), profileList.getSelectedItem());
+                while (rs.next()) {
+                    subId = Integer.parseInt(rs.getString("SubscriberId"));
+                    textProfileName.setText(rs.getString("ProfileName"));
+                    textDate.setText(rs.getString("DateOfBirth"));
+                }
+            } catch (Exception a) {
+                a.printStackTrace();
+            }
+
+                panel.add(labelProfileName);
+                panel.add(textProfileName);
+                panel.add(labelDate);
+                panel.add(textDate);
+
+                panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+
+            Object[] options = {"Edit", "Cancel"};
+
+            int n = JOptionPane.showOptionDialog(frame, panel, "Edit Profile",JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
+                if (n == JOptionPane.YES_OPTION) {
+                    if(connection.editProfile(frame, subId, textProfileName.getText(), textDate.getText())) {
+                        accountsContainer();
+                        Container newContainer = get("allProfiles");
+                        if (grabCurrentContainer() != null) {
+                            frame.getContentPane().remove(grabCurrentContainer());
+                        }
+                        frame.getContentPane().add(newContainer, BorderLayout.CENTER);
+
+                        placeCurrentContainer(newContainer);
+
+                        frame.invalidate();
+                        frame.validate();
+                        frame.repaint();
+                    }
+                }
             }
         }));
         popup.add(new JMenuItem(new AbstractAction("Delete User") {

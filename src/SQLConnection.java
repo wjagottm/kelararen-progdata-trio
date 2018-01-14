@@ -607,6 +607,34 @@ public class SQLConnection {
         return result;
     }
 
+    public boolean editProfile(JFrame frame, int subId, String Name, String Date){
+        ResultSet rs = null;
+        Connection con = null;
+        Statement stmt = null;
+        Boolean result;
+        try {
+            Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+            con = DriverManager.getConnection(connectionUrl);
+            String SQL = "UPDATE Profiles SET ProfileName = '"+Name+"', DateOfBirth = '"+Date+"' WHERE SubscriberId = "+subId;
+            stmt = con.createStatement();
+            stmt.executeUpdate(SQL);
+
+            JOptionPane.showMessageDialog(frame, "The profile has been successfully Edited!");
+            result = true;
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(frame, "The profile could not be edited!");
+            e.printStackTrace();
+            result = false;
+        } finally {
+            try {
+                stmt.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return result;
+    }
+
     public boolean removeProfile(JFrame frame, Object subscriberId, Object profileName){
         ResultSet rs = null;
         Connection con = null;
