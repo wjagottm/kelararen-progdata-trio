@@ -45,6 +45,17 @@ public class ContainerManagement {
     //Variables for create tab
     private JPanel createValues = null;
 
+    //variables for create watched tab
+    private ItemListener movieListener = null;
+    private ItemListener subscriberListener = null;
+    private JScrollPane movieInformationPane = null;
+    private JLabel subscriberIdString = null;
+    private JLabel profileString = null;
+    private JComboBox accountList = null;
+    private JSpinner percentageWatched = null;
+    private JLabel percentageWatchedString = null;
+    private JButton createWatchedValuesButton = null;
+
     public ContainerManagement(JFrame frame) {
         this.containers = new HashMap<String, Container>();
         this.currentContainer = null;
@@ -307,7 +318,7 @@ public class ContainerManagement {
         popup.add(new JMenuItem(new AbstractAction("Delete User") {
             public void actionPerformed(ActionEvent e) {
                 if(connection.removeProfile(frame, accountList.getSelectedItem(), profileList.getSelectedItem())) {
-                    accountsContainer();
+                    allProfilesContainer();
                     Container newContainer = get("allProfiles");
                     if (grabCurrentContainer() != null) {
                         frame.getContentPane().remove(grabCurrentContainer());
@@ -700,12 +711,14 @@ public class ContainerManagement {
                 if(state == 1) {
                     if(itemEvent.getItem() == "Users") {
                         createValues.removeAll();
+                        createValues.setLayout(new GridLayout(14,1));
 
                         createAccountsContainer();
 
                         updateCreateValuesContainer(createValuesContainer);
                     } else if (itemEvent.getItem() == "Profiles") {
                         createValues.removeAll();
+                        createValues.setLayout(new GridLayout(14,1));
                         JLabel UsersString = new JLabel("Fill the values below: ");
 
                         JComboBox accountList = idGrabber.getAccountId();
@@ -716,11 +729,11 @@ public class ContainerManagement {
                         JScrollPane profileNamePane = new JScrollPane(profileName);
 
 
-                        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+                        DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
                         Date date = new Date();
 
                         JLabel dateOfBirthString = new JLabel("Date of Birth:");
-                        JLabel exampleText = new JLabel("For example: " + dateFormat.format(date));
+                        JLabel exampleText = new JLabel("For example: " + dateFormat.format(date) + ", MM/dd/YEAR");
                         JTextArea dateOfBirth = new JTextArea(1,30);
                         JScrollPane dateOfBirthPane = new JScrollPane(dateOfBirth);
 
@@ -757,8 +770,159 @@ public class ContainerManagement {
 
                     } else if (itemEvent.getItem() == "Watched") {
                         createValues.removeAll();
-                        JLabel UsersString = new JLabel("Add Watched shows/movies");
-                        createValues.add(UsersString);
+                        createValues.setLayout(new GridLayout(10,1));
+
+                        JComboBox movieList = idGrabber.getAllFilmAndShowIds();
+                        JLabel movieString = new JLabel("Select a movie/show ID:");
+
+                        subscriberIdString = new JLabel("Select a subscriberId");
+                        profileString = new JLabel("Select a profile");
+                        percentageWatchedString = new JLabel("select a amount of time watched.");
+                        createWatchedValuesButton = new JButton("Add values");
+
+                        createWatchedValuesButton.addActionListener(new ActionListener() {
+                            @Override
+                            public void actionPerformed(ActionEvent e) {
+                                connection.createNewWatchedValue(movieList.getSelectedItem(), accountList.getSelectedItem(), profileList.getSelectedItem(), percentageWatched.getValue(), frame);
+                            }
+                        });
+
+                        SpinnerNumberModel model1 = new SpinnerNumberModel(0, 0, 100, 1);
+                        percentageWatched = new JSpinner(model1);
+
+
+                        subscriberListener = new ItemListener() {
+                            public void itemStateChanged(ItemEvent itemEvent) {
+                                int state = itemEvent.getStateChange();
+                                if(state == 1) {
+                                    createValues.remove(profileList);
+                                    profileList = idGrabber.getAllProfileNames(itemEvent.getItem());
+
+                                    profileList.setMaximumSize(new Dimension(8000,50));
+                                    profileList.setBackground(Color.getHSBColor(167,0,10));
+
+                                    ResultSet profileInformationRs = connection.getProfileInformation(itemEvent.getItem(), profileList.getSelectedItem());
+                                    try {
+                                        JTable profileInformationTable = new JTable(tableBuilder.buildTableModel(profileInformationRs)){
+                                            public boolean isCellEditable(int row,int column){
+                                                return false;
+                                            }
+                                        };
+
+                                        profileInformationTable.setRowHeight(tableHeight);
+
+                                        profileInformationPane = new JScrollPane(profileInformationTable);
+
+
+                                        profileList.addItemListener(profileListener);
+
+                                        createValues.add(profileList);
+                                        createValues.revalidate();
+                                        createValues.repaint();
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            }
+                        };
+
+                        String movieType = connection.getType(String.valueOf(movieList.getSelectedItem()));
+                        if(movieType.equals("Show")) {
+                            ResultSet showRs = connection.getShowInformation(movieList.getSelectedItem());
+
+                            createMovieShowInformationPane(movieList, movieString, showRs);
+
+                            createValues.add(subscriberIdString);
+
+                            accountList = idGrabber.getAccountId();
+
+                            profileList = idGrabber.getAllProfileNames(accountList.getSelectedItem());
+                            accountList.addItemListener(subscriberListener);
+
+                            createValues.add(accountList);
+                            createValues.add(profileString);
+                            createValues.add(profileList);
+                            createValues.add(percentageWatchedString);
+                            createValues.add(percentageWatched);
+                            createValues.add(createWatchedValuesButton);
+
+                        } else {
+                            ResultSet movieRs = connection.getFilmInformation(movieList.getSelectedItem());
+
+                            createMovieShowInformationPane(movieList, movieString, movieRs);
+
+                            createValues.add(subscriberIdString);
+
+                            accountList = idGrabber.getAccountId();
+
+                            profileList = idGrabber.getAllProfileNames(accountList.getSelectedItem());
+                            accountList.addItemListener(subscriberListener);
+
+                            createValues.add(accountList);
+                            createValues.add(profileString);
+                            createValues.add(profileList);
+                            createValues.add(percentageWatchedString);
+                            createValues.add(percentageWatched);
+                            createValues.add(createWatchedValuesButton);
+                        }
+
+                        movieListener = new ItemListener() {
+                            public void itemStateChanged(ItemEvent itemEvent) {
+                                int state = itemEvent.getStateChange();
+                                if(state == 1) {
+                                    createValues.remove(movieInformationPane);
+                                    createValues.remove(subscriberIdString);
+                                    createValues.remove(accountList);
+                                    createValues.remove(profileList);
+                                    createValues.remove(profileString);
+                                    createValues.remove(percentageWatchedString);
+                                    createValues.remove(percentageWatched);
+                                    createValues.remove(createWatchedValuesButton);
+                                    String movieType = connection.getType(String.valueOf(movieList.getSelectedItem()));
+                                    if(movieType.equals("Show")) {
+                                        ResultSet showRs = connection.getShowInformation(movieList.getSelectedItem());
+
+                                        createMovieShowInformationPane(movieList, movieString, showRs);
+
+                                        createValues.add(subscriberIdString);
+
+                                        accountList = idGrabber.getAccountId();
+
+                                        profileList = idGrabber.getAllProfileNames(accountList.getSelectedItem());
+                                        accountList.addItemListener(subscriberListener);
+
+                                        createValues.add(accountList);
+                                        createValues.add(profileString);
+                                        createValues.add(profileList);
+                                        createValues.add(percentageWatchedString);
+                                        createValues.add(percentageWatched);
+                                        createValues.add(createWatchedValuesButton);
+
+                                    } else {
+                                        ResultSet movieRs = connection.getFilmInformationById(movieList.getSelectedItem());
+
+                                        createMovieShowInformationPane(movieList, movieString, movieRs);
+
+                                        createValues.add(subscriberIdString);
+
+                                        accountList = idGrabber.getAccountId();
+
+                                        profileList = idGrabber.getAllProfileNames(accountList.getSelectedItem());
+                                        accountList.addItemListener(subscriberListener);
+
+                                        createValues.add(accountList);
+                                        createValues.add(profileString);
+                                        createValues.add(profileList);
+                                        createValues.add(percentageWatchedString);
+                                        createValues.add(percentageWatched);
+                                        createValues.add(createWatchedValuesButton);
+                                    }
+                                }
+                            }
+                        };
+
+                        movieList.addItemListener(movieListener);
+                        profileList.addItemListener(subscriberListener);
 
                         updateCreateValuesContainer(createValuesContainer);
 
@@ -775,6 +939,33 @@ public class ContainerManagement {
         createValuesContainer.add(createValues);
 
         add("creator", createValuesContainer);
+    }
+
+    private void createMovieShowInformationPane(JComboBox movieList, JLabel movieString, ResultSet movieRs) {
+        try {
+            JTable movieInformationTable = new JTable(tableBuilder.buildTableModel(movieRs)) {
+                public boolean isCellEditable(int row, int column) {
+                    return false;
+                }
+            };
+            movieInformationTable.setRowHeight(tableHeight);
+
+            movieInformationPane = new JScrollPane(movieInformationTable);
+
+            movieInformationPane.setPreferredSize(new Dimension(3000,200));
+
+            movieList.setMaximumSize(new Dimension(8000,50));
+            movieList.setBackground(Color.getHSBColor(167,0,10));
+
+            createValues.add(movieString);
+            createValues.add(movieList);
+            createValues.add(movieInformationPane);
+
+            createValues.revalidate();
+            createValues.repaint();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public void updateCreateValuesContainer(Container container) {
@@ -847,5 +1038,6 @@ public class ContainerManagement {
         });
         createValues.add(addAccount);
     }
+
 }
 

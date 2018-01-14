@@ -44,10 +44,19 @@ public class idGrabber {
     public JComboBox getAllProfileNames(Object subscriberId) {
         ArrayList<String> accounts = connection.getAllProfileNames(subscriberId);
         JComboBox profileNameBox = new JComboBox();
-        for (String accountName : accounts) {
-            profileNameBox.addItem(accountName);
+        for (String profileName : accounts) {
+            profileNameBox.addItem(profileName);
         }
         return profileNameBox;
+    }
+
+    public JComboBox getAllFilmAndShowIds() {
+        ArrayList<Integer> ids = connection.getAllFilmAndShowIds();
+        JComboBox filmAndShowBox = new JComboBox();
+        for (int id : ids) {
+            filmAndShowBox.addItem(id);
+        }
+        return filmAndShowBox;
     }
 
 }

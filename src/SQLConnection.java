@@ -304,6 +304,23 @@ public class SQLConnection {
         return rs;
     }
 
+    public ResultSet getFilmInformationById(Object film) {
+        ResultSet rs = null;
+        Connection con = null;
+        Statement stmt = null;
+        try {
+            Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+            con = DriverManager.getConnection(connectionUrl);
+            String SQL = "SELECT * FROM Movies WHERE Id = '"+ String.valueOf(film) +"'";
+            stmt = con.createStatement();
+            rs = stmt.executeQuery(SQL);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return rs;
+    }
+
     public ResultSet getSerieInformation(Object film, Object account) {
         ResultSet rs = null;
         Connection con = null;
@@ -314,6 +331,23 @@ public class SQLConnection {
             Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
             con = DriverManager.getConnection(connectionUrl);
             String SQL = "SELECT Episodes.*, ISNULL(WatchedId.AvgPercentage,0) AS avgAmountWatched, ISNULL(Profilename, '" + newAccountString + "') AS AccountName FROM Episodes LEFT JOIN (SELECT Watched.Watched, AVG(ISNULL(Percentage, 0)) AS AvgPercentage, Profilename FROM Watched WHERE ProfileName = '" + newAccountString + "' GROUP BY Watched.Watched, Profilename) AS WatchedId ON Episodes.Id = WatchedId.Watched WHERE Episodes.Show = '" + newFilmString + "' ORDER BY Id";
+            stmt = con.createStatement();
+            rs = stmt.executeQuery(SQL);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return rs;
+    }
+
+    public ResultSet getShowInformation(Object episode) {
+        ResultSet rs = null;
+        Connection con = null;
+        Statement stmt = null;
+        try {
+            Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+            con = DriverManager.getConnection(connectionUrl);
+            String SQL = "SELECT * FROM Episodes WHERE Id = " + String.valueOf(episode);
             stmt = con.createStatement();
             rs = stmt.executeQuery(SQL);
 
@@ -406,6 +440,57 @@ public class SQLConnection {
         return rs;
     }
 
+    public String getType(String id) {
+        ResultSet rs = null;
+        Connection con = null;
+        Statement stmt = null;
+        String type = "";
+        try {
+            Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+            con = DriverManager.getConnection(connectionUrl);
+            String SQL = "SELECT * FROM Library WHERE Id = " + id;
+            stmt = con.createStatement();
+            rs = stmt.executeQuery(SQL);
+            while(rs.next()) {
+                type = rs.getString("Type");
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return type;
+    }
+
+    public ArrayList<Integer> getAllFilmAndShowIds() {
+        ArrayList<Integer> ids = new ArrayList<Integer>();
+        try {
+            Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+            con = DriverManager.getConnection(connectionUrl);
+            String SQL = "SELECT * FROM Library";
+            stmt = con.createStatement();
+            rs = stmt.executeQuery(SQL);
+            while (rs.next()) {
+                ids.add(rs.getInt("Id"));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (rs != null) try {
+                rs.close();
+            } catch (Exception e) {
+            }
+            if (stmt != null) try {
+                stmt.close();
+            } catch (Exception e) {
+            }
+            if (con != null) try {
+                con.close();
+            } catch (Exception e) {
+            }
+        }
+        return ids;
+    }
+
     public void createNewAccount(String subscriberId, String name, String street, String postalCode, String houseNumber, String city, JFrame frame) {
         ResultSet rs = null;
         Connection con = null;
@@ -446,6 +531,26 @@ public class SQLConnection {
         }
     }
 
+    public void createNewWatchedValue(Object movieId, Object subscriberId, Object profileName, Object percentageWatched, JFrame frame) {
+        ResultSet rs = null;
+        Connection con = null;
+        Statement stmt = null;
+        try {
+            Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+            con = DriverManager.getConnection(connectionUrl);
+            String SQL = "INSERT INTO Watched VALUES ("+String.valueOf(subscriberId)+", '"+String.valueOf(profileName)+"', "+String.valueOf(movieId)+", "+String.valueOf(percentageWatched)+")";
+            stmt = con.createStatement();
+            stmt.executeUpdate(SQL);
+
+
+            JOptionPane.showMessageDialog(frame, "Values added succesfully!");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(frame, "The inserted values where not correct.");
+        }
+    }
+
     public boolean removeAccount(JFrame frame, Object accountId){
         ResultSet rs = null;
         Connection con = null;
@@ -454,7 +559,7 @@ public class SQLConnection {
         try {
             Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
             con = DriverManager.getConnection(connectionUrl);
-            String SQL = "DELETE FROM Users WHERE SubscriberId = " + accountId;
+            String SQL = "DELETE FROM Users WHERE SubscriberId = " + String.valueOf(accountId);
             stmt = con.createStatement();
             stmt.executeUpdate(SQL);
 
@@ -510,7 +615,7 @@ public class SQLConnection {
         try {
             Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
             con = DriverManager.getConnection(connectionUrl);
-            String SQL = "DELETE FROM Profiles WHERE SubcriberId = " + subscriberId + " AND ProfileName = " + profileName;
+            String SQL = "DELETE FROM Profiles WHERE SubscriberId = " + String.valueOf(subscriberId) + " AND profileName = '" + String.valueOf(profileName) + "'";
             stmt = con.createStatement();
             stmt.executeUpdate(SQL);
 
@@ -529,5 +634,7 @@ public class SQLConnection {
         }
         return result;
     }
+
+
 }
 

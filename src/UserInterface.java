@@ -21,6 +21,8 @@ public class UserInterface implements Runnable {
         setUIFont (new javax.swing.plaf.FontUIResource("Serif",Font.BOLD,bigFontSize));
         UIManager.put("Button.font", new FontUIResource(new Font("Sans-serif", Font.PLAIN, smallFontSize)));
         UIManager.put("Table.font", new FontUIResource(new Font("Sans-serif", Font.PLAIN, smallFontSize)));
+        UIManager.put("TextArea.font", new FontUIResource(new Font("Sans-serif", Font.PLAIN, smallFontSize)));
+        UIManager.put("ComboBox.font", new FontUIResource(new Font("Sans-serif", Font.PLAIN, smallFontSize)));
 
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
