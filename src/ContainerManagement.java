@@ -55,6 +55,14 @@ public class ContainerManagement {
     private JSpinner percentageWatched = null;
     private JLabel percentageWatchedString = null;
     private JButton createWatchedValuesButton = null;
+    private JLabel watchedInformationString = null;
+
+    //Variables for edit watched tab
+    private JPanel editValues = null;
+    private JButton editWatchedValuesButton = null;
+    private JButton deleteWatchedValuesButton = null;
+    private JLabel movieString = null;
+    private JComboBox movieList = null;
 
     public ContainerManagement(JFrame frame) {
         this.containers = new HashMap<String, Container>();
@@ -273,20 +281,7 @@ public class ContainerManagement {
         add("allAccounts", accountContainer);
     }
 
-    public void refreshAccountsContainer() {
-        accountsContainer();
-        Container newContainer = get("allAccounts");
-        if (grabCurrentContainer() != null) {
-            frame.getContentPane().remove(grabCurrentContainer());
-        }
-        frame.getContentPane().add(newContainer, BorderLayout.CENTER);
 
-        placeCurrentContainer(newContainer);
-
-        frame.invalidate();
-        frame.validate();
-        frame.repaint();
-    }
 
     public void allProfilesContainer() {
         Container profilesContainer = new Container();
@@ -458,21 +453,6 @@ public class ContainerManagement {
         add("allProfiles", profilesContainer);
     }
 
-    public void refreshProfileContainer() {
-        allProfilesContainer();
-        Container newContainer = get("allProfiles");
-        if (grabCurrentContainer() != null) {
-            frame.getContentPane().remove(grabCurrentContainer());
-        }
-        frame.getContentPane().add(newContainer, BorderLayout.CENTER);
-
-        placeCurrentContainer(newContainer);
-
-        frame.invalidate();
-        frame.validate();
-        frame.repaint();
-    }
-
     public void singleProfileAccounts() {
         Container singleProfileAccounts = new Container();
         JLabel singleProfileAccountString = new JLabel("Single profile Accounts: ");
@@ -570,42 +550,6 @@ public class ContainerManagement {
         }
 
         add("allSeries", allSeries);
-    }
-
-    private void addShowInformationPanel(ResultSet serieInformation, Container allSeries) {
-        try {
-            if (serieInformationPane != null) {
-                allSeries.remove(serieInformationPane);
-
-                JTable serieInformationTable = new JTable(tableBuilder.buildTableModel(serieInformation)){
-                    public boolean isCellEditable(int row,int column){
-                        return false;
-                    }
-                };
-                serieInformationTable.setRowHeight(tableHeight);
-
-                serieInformationPane = new JScrollPane(serieInformationTable);
-                allSeries.add(serieInformationPane);
-
-                allSeries.revalidate();
-                allSeries.repaint();
-            } else {
-                JTable serieInformationTable = new JTable(tableBuilder.buildTableModel(serieInformation)){
-                    public boolean isCellEditable(int row,int column){
-                        return false;
-                    }
-                };
-                serieInformationTable.setRowHeight(tableHeight);
-
-                serieInformationPane = new JScrollPane(serieInformationTable);
-                allSeries.add(serieInformationPane);
-
-                allSeries.revalidate();
-                allSeries.repaint();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     public void getAllFilmsContainer() {
@@ -803,7 +747,7 @@ public class ContainerManagement {
 
                     } else if (itemEvent.getItem() == "Watched") {
                         createValues.removeAll();
-                        createValues.setLayout(new GridLayout(10,1));
+                        createValues.setLayout(new GridLayout(11,1));
 
                         JComboBox movieList = idGrabber.getAllFilmAndShowIds();
                         JLabel movieString = new JLabel("Select a movie/show ID:");
@@ -863,7 +807,7 @@ public class ContainerManagement {
                         if(movieType.equals("Show")) {
                             ResultSet showRs = connection.getShowInformation(movieList.getSelectedItem());
 
-                            createMovieShowInformationPane(movieList, movieString, showRs);
+                            createMovieShowInformationPane(movieList, movieString, showRs, createValues);
 
                             createValues.add(subscriberIdString);
 
@@ -882,7 +826,7 @@ public class ContainerManagement {
                         } else {
                             ResultSet movieRs = connection.getFilmInformation(movieList.getSelectedItem());
 
-                            createMovieShowInformationPane(movieList, movieString, movieRs);
+                            createMovieShowInformationPane(movieList, movieString, movieRs, createValues);
 
                             createValues.add(subscriberIdString);
 
@@ -915,7 +859,7 @@ public class ContainerManagement {
                                     if(movieType.equals("Show")) {
                                         ResultSet showRs = connection.getShowInformation(movieList.getSelectedItem());
 
-                                        createMovieShowInformationPane(movieList, movieString, showRs);
+                                        createMovieShowInformationPane(movieList, movieString, showRs, createValues);
 
                                         createValues.add(subscriberIdString);
 
@@ -934,7 +878,7 @@ public class ContainerManagement {
                                     } else {
                                         ResultSet movieRs = connection.getFilmInformationById(movieList.getSelectedItem());
 
-                                        createMovieShowInformationPane(movieList, movieString, movieRs);
+                                        createMovieShowInformationPane(movieList, movieString, movieRs, createValues);
 
                                         createValues.add(subscriberIdString);
 
@@ -979,11 +923,146 @@ public class ContainerManagement {
 
         editWatchedValuesContainer.setLayout(new BoxLayout(editWatchedValuesContainer, BoxLayout.Y_AXIS));
 
+        editValues = new JPanel();
+        editValues.setBackground(Color.WHITE);
+
+        editValues.setLayout(new GridLayout(12,1));
+
+        movieString = new JLabel("Select a movie/show ID:");
+
+        subscriberIdString = new JLabel("Select a subscriberId");
+        profileString = new JLabel("Select a profile");
+        percentageWatchedString = new JLabel("select a amount of time watched.");
+        editWatchedValuesButton = new JButton("Edit value");
+        deleteWatchedValuesButton = new JButton("Delete values");
+
+        editWatchedValuesButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(connection.editWatchedValue(movieList.getSelectedItem(), accountList.getSelectedItem(), profileList.getSelectedItem(), percentageWatched.getValue(), frame)) {
+                    refreshEditWatchedValuesContainer();
+                }
+            }
+        });
+
+        deleteWatchedValuesButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(connection.deleteWatchedValue(movieList.getSelectedItem(), accountList.getSelectedItem(), profileList.getSelectedItem(), frame)) {
+                    refreshEditWatchedValuesContainer();
+                }
+            }
+        });
+        accountList = idGrabber.getAccountId();
+        profileList = idGrabber.getAllProfileNames(accountList.getSelectedItem());
+
+        movieList = idGrabber.getAllFilmAndShowIds(accountList.getSelectedItem(), profileList.getSelectedItem());
+
+        SpinnerNumberModel model1 = new SpinnerNumberModel(0, 0, 100, 1);
+        percentageWatched = new JSpinner(model1);
+
+        movieListener = new ItemListener() {
+            public void itemStateChanged(ItemEvent itemEvent) {
+                int state = itemEvent.getStateChange();
+                if(state == 1) {
+                    removeEditWatchedValuesInformation(editWatchedValuesContainer);
+                    checkMovieListType();
+
+                    percentageWatched.setValue(connection.getPercentageWatched(accountList.getSelectedItem(), profileList.getSelectedItem(), movieList.getSelectedItem()));
+                    editValues.add(percentageWatchedString);
+                    editValues.add(percentageWatched);
+                    editValues.add(editWatchedValuesButton);
+                    editValues.add(deleteWatchedValuesButton);
+                }
+            }
+        };
+
+        subscriberListener = new ItemListener() {
+            public void itemStateChanged(ItemEvent itemEvent) {
+                int state = itemEvent.getStateChange();
+                if(state == 1) {
+                    editValues.remove(profileList);
+                    editValues.remove(movieString);
+                    editValues.remove(movieList);
+                    removeEditWatchedValuesInformation(editWatchedValuesContainer);
+
+                    profileList = idGrabber.getAllProfileNames(accountList.getSelectedItem());
+
+                    movieList = idGrabber.getAllFilmAndShowIds(accountList.getSelectedItem(), profileList.getSelectedItem());
+
+                    movieList.addItemListener(movieListener);
+
+                    editValues.add(profileList);
+                    editValues.add(movieString);
+                    editValues.add(movieList);
+
+                    checkMovieListType();
+
+                    percentageWatched.setValue(connection.getPercentageWatched(accountList.getSelectedItem(), profileList.getSelectedItem(), movieList.getSelectedItem()));
+                    editValues.add(percentageWatchedString);
+                    editValues.add(percentageWatched);
+                    editValues.add(editWatchedValuesButton);
+                    editValues.add(deleteWatchedValuesButton);
+
+                    editValues.revalidate();
+                    editValues.repaint();
+                }
+            }
+        };
+
+        movieList.addItemListener(movieListener);
+        accountList.addItemListener(subscriberListener);
+
+        editValues.add(subscriberIdString);
+        editValues.add(accountList);
+        editValues.add(profileString);
+        editValues.add(profileList);
+        editValues.add(movieString);
+        editValues.add(movieList);
+        checkMovieListType();
+
+        percentageWatched.setValue(connection.getPercentageWatched(accountList.getSelectedItem(), profileList.getSelectedItem(), movieList.getSelectedItem()));
+        editValues.add(percentageWatchedString);
+        editValues.add(percentageWatched);
+        editValues.add(editWatchedValuesButton);
+        editValues.add(deleteWatchedValuesButton);
+
+        editWatchedValuesContainer.add(editValues);
+
         add("editWatched", editWatchedValuesContainer);
     }
 
-    private void createMovieShowInformationPane(JComboBox movieList, JLabel movieString, ResultSet movieRs) {
+    private void removeEditWatchedValuesInformation(Container editWatchedValuesContainer) {
+        if (movieInformationPane != null) {
+            editValues.remove(movieInformationPane);
+            editValues.remove(percentageWatchedString);
+            editValues.remove(percentageWatched);
+            editValues.remove(editWatchedValuesContainer);
+            editValues.remove(deleteWatchedValuesButton);
+        }
+    }
+
+    private void checkMovieListType() {
+        if(movieList.getSelectedItem() != null) {
+            String movieType = connection.getType(String.valueOf(movieList.getSelectedItem()));
+            if (movieType.equals("Show")) {
+                ResultSet showRs = connection.getShowInformation(movieList.getSelectedItem());
+
+                createMovieShowInformationPane(movieList, movieString, showRs, editValues);
+            } else {
+                ResultSet movieRs = connection.getFilmInformationById(movieList.getSelectedItem());
+
+                createMovieShowInformationPane(movieList, movieString, movieRs, editValues);
+            }
+        }
+    }
+
+    private void createMovieShowInformationPane(JComboBox movieList, JLabel movieString, ResultSet movieRs, JPanel panel) {
         try {
+            if(watchedInformationString != null) {
+                panel.remove(watchedInformationString);
+            }
+            watchedInformationString = new JLabel("Selected Film/Show information:");
             JTable movieInformationTable = new JTable(tableBuilder.buildTableModel(movieRs)) {
                 public boolean isCellEditable(int row, int column) {
                     return false;
@@ -998,12 +1077,13 @@ public class ContainerManagement {
             movieList.setMaximumSize(new Dimension(8000,50));
             movieList.setBackground(Color.getHSBColor(167,0,10));
 
-            createValues.add(movieString);
-            createValues.add(movieList);
-            createValues.add(movieInformationPane);
+            panel.add(movieString);
+            panel.add(movieList);
+            panel.add(watchedInformationString);
+            panel.add(movieInformationPane);
 
-            createValues.revalidate();
-            createValues.repaint();
+            panel.revalidate();
+            panel.repaint();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -1080,5 +1160,84 @@ public class ContainerManagement {
         createValues.add(addAccount);
     }
 
-}
+    private void addShowInformationPanel(ResultSet serieInformation, Container allSeries) {
+        try {
+            if (serieInformationPane != null) {
+                allSeries.remove(serieInformationPane);
 
+                JTable serieInformationTable = new JTable(tableBuilder.buildTableModel(serieInformation)){
+                    public boolean isCellEditable(int row,int column){
+                        return false;
+                    }
+                };
+                serieInformationTable.setRowHeight(tableHeight);
+
+                serieInformationPane = new JScrollPane(serieInformationTable);
+                allSeries.add(serieInformationPane);
+
+                allSeries.revalidate();
+                allSeries.repaint();
+            } else {
+                JTable serieInformationTable = new JTable(tableBuilder.buildTableModel(serieInformation)){
+                    public boolean isCellEditable(int row,int column){
+                        return false;
+                    }
+                };
+                serieInformationTable.setRowHeight(tableHeight);
+
+                serieInformationPane = new JScrollPane(serieInformationTable);
+                allSeries.add(serieInformationPane);
+
+                allSeries.revalidate();
+                allSeries.repaint();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void refreshEditWatchedValuesContainer() {
+        editWatchedValuesContainer();
+        Container newContainer = get("editWatched");
+        if (grabCurrentContainer() != null) {
+            frame.getContentPane().remove(grabCurrentContainer());
+        }
+        frame.getContentPane().add(newContainer, BorderLayout.CENTER);
+
+        placeCurrentContainer(newContainer);
+
+        frame.invalidate();
+        frame.validate();
+        frame.repaint();
+    }
+    public void refreshAccountsContainer() {
+        accountsContainer();
+        Container newContainer = get("allAccounts");
+        if (grabCurrentContainer() != null) {
+            frame.getContentPane().remove(grabCurrentContainer());
+        }
+        frame.getContentPane().add(newContainer, BorderLayout.CENTER);
+
+        placeCurrentContainer(newContainer);
+
+        frame.invalidate();
+        frame.validate();
+        frame.repaint();
+    }
+
+    public void refreshProfileContainer() {
+        allProfilesContainer();
+        Container newContainer = get("allProfiles");
+        if (grabCurrentContainer() != null) {
+            frame.getContentPane().remove(grabCurrentContainer());
+        }
+        frame.getContentPane().add(newContainer, BorderLayout.CENTER);
+
+        placeCurrentContainer(newContainer);
+
+        frame.invalidate();
+        frame.validate();
+        frame.repaint();
+    }
+
+}

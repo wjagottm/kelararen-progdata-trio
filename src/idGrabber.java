@@ -1,3 +1,4 @@
+//The idGrabber class is to get all unique identifiers and put them into a JCombobox to keep the containerManagement class as clean as possible.
 import javax.swing.*;
 import java.util.ArrayList;
 
@@ -52,6 +53,14 @@ public class idGrabber {
 
     public JComboBox getAllFilmAndShowIds() {
         ArrayList<Integer> ids = connection.getAllFilmAndShowIds();
+        JComboBox filmAndShowBox = new JComboBox();
+        for (int id : ids) {
+            filmAndShowBox.addItem(id);
+        }
+        return filmAndShowBox;
+    }
+    public JComboBox getAllFilmAndShowIds(Object subscriberId, Object profileName) {
+        ArrayList<Integer> ids = connection.getAllFilmAndShowIds(subscriberId, profileName);
         JComboBox filmAndShowBox = new JComboBox();
         for (int id : ids) {
             filmAndShowBox.addItem(id);

@@ -491,6 +491,66 @@ public class SQLConnection {
         return ids;
     }
 
+    public ArrayList<Integer> getAllFilmAndShowIds(Object subscriberId, Object profileName) {
+        ArrayList<Integer> ids = new ArrayList<Integer>();
+        try {
+            Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+            con = DriverManager.getConnection(connectionUrl);
+            String SQL = "SELECT * FROM Watched WHERE SubscriberId = "+String.valueOf(subscriberId)+" AND ProfileName = '"+String.valueOf(profileName)+"'";
+            stmt = con.createStatement();
+            rs = stmt.executeQuery(SQL);
+            while (rs.next()) {
+                ids.add(rs.getInt("Watched"));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (rs != null) try {
+                rs.close();
+            } catch (Exception e) {
+            }
+            if (stmt != null) try {
+                stmt.close();
+            } catch (Exception e) {
+            }
+            if (con != null) try {
+                con.close();
+            } catch (Exception e) {
+            }
+        }
+        return ids;
+    }
+
+    public int getPercentageWatched(Object subscriberId, Object profileName, Object movieId) {
+        int percentage = 0;
+        try {
+            Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+            con = DriverManager.getConnection(connectionUrl);
+            String SQL = "SELECT * FROM Watched WHERE SubscriberId = "+String.valueOf(subscriberId)+" AND ProfileName = '"+String.valueOf(profileName)+"' AND Watched = "+String.valueOf(movieId)+"";
+            stmt = con.createStatement();
+            rs = stmt.executeQuery(SQL);
+            while (rs.next()) {
+                percentage = rs.getInt("Percentage");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (rs != null) try {
+                rs.close();
+            } catch (Exception e) {
+            }
+            if (stmt != null) try {
+                stmt.close();
+            } catch (Exception e) {
+            }
+            if (con != null) try {
+                con.close();
+            } catch (Exception e) {
+            }
+        }
+        return percentage;
+    }
+
     public void createNewAccount(String subscriberId, String name, String street, String postalCode, String houseNumber, String city, JFrame frame) {
         ResultSet rs = null;
         Connection con = null;
@@ -635,6 +695,34 @@ public class SQLConnection {
         return result;
     }
 
+    public boolean editWatchedValue(Object movieId, Object subscriberId, Object profileName, Object percentage, JFrame frame) {
+        ResultSet rs = null;
+        Connection con = null;
+        Statement stmt = null;
+        Boolean result;
+        try {
+            Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+            con = DriverManager.getConnection(connectionUrl);
+            String SQL = "UPDATE Watched SET Percentage = "+String.valueOf(percentage)+" WHERE SubscriberId = "+String.valueOf(subscriberId)+" AND ProfileName = '"+String.valueOf(profileName)+"' AND Watched = "+String.valueOf(movieId);
+            stmt = con.createStatement();
+            stmt.executeUpdate(SQL);
+
+            JOptionPane.showMessageDialog(frame, "The value has been successfully Edited!");
+            result = true;
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(frame, "The value could not be edited!");
+            e.printStackTrace();
+            result = false;
+        } finally {
+            try {
+                stmt.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return result;
+    }
+
     public boolean removeProfile(JFrame frame, Object subscriberId, Object profileName){
         ResultSet rs = null;
         Connection con = null;
@@ -651,6 +739,34 @@ public class SQLConnection {
             result = true;
         } catch (Exception e) {
             JOptionPane.showMessageDialog(frame, "The profile could not be removed!");
+            e.printStackTrace();
+            result = false;
+        } finally {
+            try {
+                stmt.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return result;
+    }
+
+    public boolean deleteWatchedValue(Object movieId, Object subscriberId, Object profileName, JFrame frame) {
+        ResultSet rs = null;
+        Connection con = null;
+        Statement stmt = null;
+        Boolean result;
+        try {
+            Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+            con = DriverManager.getConnection(connectionUrl);
+            String SQL = "DELETE FROM Watched WHERE SubscriberId = " + String.valueOf(subscriberId) + " AND profileName = '" + String.valueOf(profileName) + "' AND Watched = "+String.valueOf(movieId)+"";
+            stmt = con.createStatement();
+            stmt.executeUpdate(SQL);
+
+            JOptionPane.showMessageDialog(frame, "The values have been successfully removed!");
+            result = true;
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(frame, "The values could not be removed!");
             e.printStackTrace();
             result = false;
         } finally {

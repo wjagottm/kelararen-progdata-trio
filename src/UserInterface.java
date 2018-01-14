@@ -207,7 +207,7 @@ public class UserInterface implements Runnable {
 
         //Add left buttons to JPanel inside 3
         leftPanelInside3.add(new JLabel(""));
-        leftPanelInside3.add(new JLabel(""));
+        leftPanelInside3.add(editWatched);
         leftPanelInside3.add(create);
 
         leftPanel.setBorder(BorderFactory.createLineBorder(Color.BLUE));
@@ -229,6 +229,7 @@ public class UserInterface implements Runnable {
 
         //Set JLabel text size
         projectName.setFont(new Font("Serif", Font.BOLD, bigFontSize));
+        projectName.setForeground(Color.RED);
         creatorNames.setFont(new Font("Serif", Font.BOLD, smallFontSize));
 
         //Add JLabel to JPanel
