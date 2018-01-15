@@ -9,10 +9,6 @@ public class SQLConnection {
     private Statement stmt = null;
     private ResultSet rs = null;
 
-    public SQLConnection() {
-
-    }
-
     public ArrayList<Integer> getAccountId() {
         ArrayList<Integer> accounts = new ArrayList<Integer>();
         try {
@@ -657,7 +653,7 @@ public class SQLConnection {
         return result;
     }
 
-    public boolean editAccount(JFrame frame, int subId, String Name, String Street, String PostalCode, String HouseNumber, String City){
+    public boolean editAccount(JFrame frame, int subscriberId, String name, String street, String postalCode, String houseNumber, String city){
         ResultSet rs = null;
         Connection con = null;
         Statement stmt = null;
@@ -665,7 +661,7 @@ public class SQLConnection {
         try {
             Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
             con = DriverManager.getConnection(connectionUrl);
-            String SQL = "UPDATE Users SET Name = '"+Name+"', Street = '"+Street+"', PostalCode = '"+PostalCode+"', HouseNumber = '"+HouseNumber+"', City = '"+City+"' WHERE SubscriberId = "+subId;
+            String SQL = "UPDATE Users SET Name = '"+name+"', Street = '"+street+"', PostalCode = '"+postalCode+"', HouseNumber = '"+houseNumber+"', City = '"+city+"' WHERE SubscriberId = "+subscriberId;
             stmt = con.createStatement();
             stmt.executeUpdate(SQL);
 
@@ -685,7 +681,7 @@ public class SQLConnection {
         return result;
     }
 
-    public boolean editProfile(JFrame frame, int subId, String Name, String Date){
+    public boolean editProfile(JFrame frame, int subscriberId, String name, String date){
         ResultSet rs = null;
         Connection con = null;
         Statement stmt = null;
@@ -693,7 +689,7 @@ public class SQLConnection {
         try {
             Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
             con = DriverManager.getConnection(connectionUrl);
-            String SQL = "UPDATE Profiles SET ProfileName = '"+Name+"', DateOfBirth = '"+Date+"' WHERE SubscriberId = "+subId;
+            String SQL = "UPDATE Profiles SET ProfileName = '"+name+"', DateOfBirth = '"+date+"' WHERE SubscriberId = "+subscriberId;
             stmt = con.createStatement();
             stmt.executeUpdate(SQL);
 
