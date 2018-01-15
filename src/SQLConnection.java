@@ -340,6 +340,24 @@ public class SQLConnection {
         return rs;
     }
 
+    public ResultSet getSerieInformation(Object show) {
+        ResultSet rs = null;
+        Connection con = null;
+        Statement stmt = null;
+        String newShowString = String.valueOf(show).replaceAll("'","''");
+        try {
+            Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+            con = DriverManager.getConnection(connectionUrl);
+            String SQL = "SELECT Episodes.*, AvgWatched.AvgPercentage AS AvgWatchedPercentage FROM Episodes, (SELECT Watched, AVG(Percentage) AS AvgPercentage FROM Watched GROUP BY Watched) AS AvgWatched WHERE Episodes.Id = AvgWatched.Watched AND Episodes.Show = '"+newShowString+"';";
+            stmt = con.createStatement();
+            rs = stmt.executeQuery(SQL);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return rs;
+    }
+
     public ResultSet getShowInformation(Object episode) {
         ResultSet rs = null;
         Connection con = null;

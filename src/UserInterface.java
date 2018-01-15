@@ -52,6 +52,7 @@ public class UserInterface implements Runnable {
         containerManagement.getAllFilmsContainer();
         containerManagement.editWatchedValuesContainer();
         containerManagement.createValuesContainer();
+        containerManagement.seriesInformationContainer();
 
         container.add(createLeftButtons(), BorderLayout.WEST);
         container.add(footer(), BorderLayout.SOUTH);
@@ -72,8 +73,9 @@ public class UserInterface implements Runnable {
         JButton accounts = new JButton("Accounts");
         JButton profiles = new JButton("Profiles");
         JButton accountWithOneProfile = new JButton("Accounts with 1 profile");
-        JButton series = new JButton("Users average view time per show");
         JButton films = new JButton("Movies");
+        JButton seriesInformation = new JButton("Shows");
+        JButton series = new JButton("Users average view time per show");
         JButton editWatched = new JButton("Edit watched values");
         JButton create = new JButton("Add database values");
 
@@ -196,14 +198,31 @@ public class UserInterface implements Runnable {
             }
         });
 
+        seriesInformation.addActionListener(new ActionListener()
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+                Container testCurrentContainer = containerManagement.grabCurrentContainer();
+                containerManagement.seriesInformationContainer();
+                Container newContainer = containerManagement.get("seriesInformation");
+                if (testCurrentContainer != null) {
+                    frame.getContentPane().remove(testCurrentContainer);
+                }
+                frame.getContentPane().add(newContainer, BorderLayout.CENTER);
+
+                addNewContainer(newContainer);
+            }
+        });
+
         //Add left buttons to JPanel inside 1
         leftPanelInside1.add(accounts);
         leftPanelInside1.add(profiles);
         leftPanelInside1.add(accountWithOneProfile);
 
         //Add left buttons to JPanel inside 2
-        leftPanelInside2.add(series);
         leftPanelInside2.add(films);
+        leftPanelInside2.add(seriesInformation);
+        leftPanelInside2.add(series);
 
         //Add left buttons to JPanel inside 3
         leftPanelInside3.add(new JLabel(""));

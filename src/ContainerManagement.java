@@ -552,6 +552,38 @@ public class ContainerManagement {
         add("allSeries", allSeries);
     }
 
+    public void seriesInformationContainer() {
+        Container seriesInformationContainer = new Container();
+
+        JComboBox allSerieTitles = idGrabber.getAllSerieTitles();
+        JLabel seriesString = new JLabel("Select a show:");
+
+        allSerieTitles.setMaximumSize(new Dimension(8000,50));
+        allSerieTitles.setBackground(Color.getHSBColor(167,0,10));
+        seriesInformationContainer.setLayout(new BoxLayout(seriesInformationContainer, BoxLayout.Y_AXIS));
+
+        ItemListener serieListener = new ItemListener() {
+            public void itemStateChanged(ItemEvent itemEvent) {
+                int state = itemEvent.getStateChange();
+                if (state == 1) {
+                    ResultSet serieInformation = connection.getSerieInformation(itemEvent.getItem());
+                    addShowInformationPanel(serieInformation, seriesInformationContainer);
+                }
+            }
+        };
+
+        allSerieTitles.addItemListener(serieListener);
+
+        seriesInformationContainer.add(seriesString);
+        seriesInformationContainer.add(allSerieTitles);
+
+        ResultSet serieInformation = connection.getSerieInformation(allSerieTitles.getSelectedItem());
+        addShowInformationPanel(serieInformation, seriesInformationContainer);
+
+
+        add("seriesInformation", seriesInformationContainer);
+    }
+
     public void getAllFilmsContainer() {
         Container allFilms = new Container();
 
